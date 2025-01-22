@@ -1,0 +1,101 @@
+﻿@FoodOutletRESTAPIDatabase_HostAddress = https://localhost:7277
+@id = 9
+@foodOutletId=9
+
+//Foodoutlet actions
+
+//Create foodoutlet
+POST {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet
+Content-Type: application/json
+
+{
+  "name": "test",
+  "location": "mars"
+}
+
+###
+
+//get all outlets
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet
+
+###
+
+//get specific outlet
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
+
+###
+
+//update foodoutelet
+PUT {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
+Content-Type: application/json
+
+{
+  "name": "Kebab King",
+  "location": "poznan"
+}
+
+###
+
+//Delete foodoutlet
+DELETE {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
+
+###
+
+// Login actions
+
+//correct login
+POST {{FoodOutletRESTAPIDatabase_HostAddress}}/api/login/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+###
+
+//register user
+POST {{FoodOutletRESTAPIDatabase_HostAddress}}/api/login/register
+Content-Type: application/json
+
+{
+  "username": "aksell",
+  "password": "123456"
+}
+
+###
+
+//Reviews actions
+
+//get all reviews on the api
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/reviews
+
+###
+
+//get all reviews for specific outlet
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{foodOutletId}}/reviews
+
+###
+
+//Post reviews for an outlet
+POST {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{foodOutletId}}/reviews
+Content-Type: application/json
+
+{
+  "comment": "test review",
+  "score": 1
+}
+
+###
+
+//Extra actions
+
+//get average ratings for specific outlet
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{id}}/average-rating
+
+###
+
+//top rated outlets
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/top-rated
+
+###
