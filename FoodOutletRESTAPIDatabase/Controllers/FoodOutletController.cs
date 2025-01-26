@@ -1,4 +1,5 @@
 ﻿using FoodOutletRESTAPIDatabase.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -64,6 +65,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         //Update
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateFoodOutlet(int id, FoodOutlet updated)
         {
             var existing = await _db.FoodOutlets.FindAsync(id);
@@ -76,6 +78,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         //Delete
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteFoodOutlet(int id)
         {
             var outlet = await _db.FoodOutlets.FindAsync(id);

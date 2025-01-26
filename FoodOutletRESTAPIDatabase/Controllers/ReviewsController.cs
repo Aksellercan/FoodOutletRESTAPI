@@ -1,9 +1,11 @@
 ﻿//using FoodOutletRESTAPIDatabase.Models;
 //using Microsoft.AspNetCore.Mvc;
 //using Microsoft.EntityFrameworkCore;
+//using Microsoft.AspNetCore.Authorization;
 
 //namespace FoodOutletRESTAPIDatabase.Controllers
 //{
+//    [Authorize(Roles = "User")]
 //    [Route("api/[controller]")]
 //    [ApiController]
 //    public class ReviewsController : ControllerBase
@@ -24,8 +26,11 @@
 //        }
 
 //        [HttpPost("{foodOutletId}/reviews")]
-//        public async Task<IActionResult> CreateReview(int foodOutletId, [FromBody] Review review)
+//        [Authorize(Roles = "User")]
+//        public async Task<IActionResult> PostReview(int foodOutletId, [FromBody] Review review)
 //        {
+//            Console.WriteLine($"Food Outlet ID: {foodOutletId}");
+
 //            if (review.Score < 1 || review.Score > 5)
 //            {
 //                return BadRequest("Review score must be between 1 and 5");

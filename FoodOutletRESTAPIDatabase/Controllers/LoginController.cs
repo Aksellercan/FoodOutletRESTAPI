@@ -49,6 +49,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Role, user.Role),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 },
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: credentials);
@@ -70,7 +71,5 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var token = GenerateJwtToken(user, config);
             return Ok(new { Token = token });
         }
-
-
     }
 }

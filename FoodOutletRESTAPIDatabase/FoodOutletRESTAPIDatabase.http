@@ -1,6 +1,6 @@
 ﻿@FoodOutletRESTAPIDatabase_HostAddress = https://localhost:7277
-@id = 9
-@foodOutletId=9
+@id = 8
+@foodOutletId=10
 
 //Foodoutlet actions
 
@@ -28,7 +28,7 @@ GET {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
 //update foodoutelet
 PUT {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
 Content-Type: application/json
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczNzk5NzUwMSwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.ZiFqJOr-kubtHjzAWFFKWUFoRwQCAOOsmz1W8l99M34
 {
   "name": "Kebab King",
   "location": "poznan"
@@ -38,6 +38,8 @@ Content-Type: application/json
 
 //Delete foodoutlet
 DELETE {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczNzk5NzUwMSwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.ZiFqJOr-kubtHjzAWFFKWUFoRwQCAOOsmz1W8l99M34
+
 
 ###
 
@@ -50,6 +52,17 @@ Content-Type: application/json
 {
   "username": "testuser",
   "password": "password123"
+}
+
+###
+
+//Admin login
+POST {{FoodOutletRESTAPIDatabase_HostAddress}}/api/login/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
 }
 
 ###
@@ -77,14 +90,16 @@ GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{foodOutletId}}/revie
 
 ###
 
-//Post reviews for an outlet
+//Post reviews for an outlet using jwt token
 POST {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{foodOutletId}}/reviews
 Content-Type: application/json
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczNzk5NzUwMSwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.ZiFqJOr-kubtHjzAWFFKWUFoRwQCAOOsmz1W8l99M34
 {
-  "comment": "test review",
-  "score": 1
+  "comment": "admin review",
+  "score": 5
 }
+
+###
 
 ###
 
@@ -99,3 +114,5 @@ GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{id}}/average-rating
 GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/top-rated
 
 ###
+
+

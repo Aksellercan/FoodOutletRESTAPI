@@ -1,8 +1,10 @@
 using FoodOutletRESTAPIDatabase;
+using FoodOutletRESTAPIDatabase.Controllers;
 using FoodOutletRESTAPIDatabase.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +31,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                Console.WriteLine("Authorization failed: " + context.ErrorDescription);
+                return Task.CompletedTask;
+            }
+        };
+
     });
 builder.Services.AddAuthorization();
 
@@ -64,6 +81,24 @@ app.MapGet("/foodoutlets/{id}/average-rating", async (int id, FoodOutletDb db) =
     return Results.Ok(average ?? 0);
 });
 
+//original working code
+//app.MapPost("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, Review review, FoodOutletDb db) =>
+//{
+//    if (review.Score < 1 || review.Score > 5)
+//    {
+//        return Results.BadRequest("Review score must be between 1 and 5");
+//    }
+//    else if (!await db.FoodOutlets.AnyAsync(fo => fo.Id == foodOutletId))
+//    {
+//        return Results.BadRequest("Food Outlet Not Found");
+//    }
+//    review.FoodOutletId = foodOutletId;
+//    db.Reviews.Add(review);
+//    await db.SaveChangesAsync();
+//    return Results.Created($"/foodoutlets/{foodOutletId}/reviews/{review.Id}", review);
+//});
+
+//authoriaztion required posting review
 app.MapPost("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, Review review, FoodOutletDb db) =>
 {
     if (review.Score < 1 || review.Score > 5)
@@ -78,7 +113,7 @@ app.MapPost("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, Revi
     db.Reviews.Add(review);
     await db.SaveChangesAsync();
     return Results.Created($"/foodoutlets/{foodOutletId}/reviews/{review.Id}", review);
-});
+}).RequireAuthorization();
 
 app.MapGet("/reviews", async (FoodOutletDb db) =>
     await db.Reviews
