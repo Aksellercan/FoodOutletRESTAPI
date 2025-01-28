@@ -55,6 +55,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         //Create
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateFoodOutlet(FoodOutlet foodOutlet)
         {
             if (string.IsNullOrEmpty(foodOutlet.Name) || string.IsNullOrEmpty(foodOutlet.Location)) return BadRequest("Name and Location are required");

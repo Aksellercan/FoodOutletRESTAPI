@@ -1,10 +1,8 @@
 using FoodOutletRESTAPIDatabase;
-using FoodOutletRESTAPIDatabase.Controllers;
 using FoodOutletRESTAPIDatabase.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +45,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
 
     });
+
+
+//Cors testing
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
@@ -54,6 +62,8 @@ var app = builder.Build();
 // Add middleware for authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
+//cors middleware
+app.UseCors("AllowAll");
 
 // Map controllers to routes
 app.MapControllers();
@@ -71,7 +81,7 @@ await db.FoodOutlets
            ReviewCount = fo.Reviews.Count
        })
        .OrderByDescending(fo => fo.Rating)
-       .Take(5)
+       //.Take(5) //only shows 5
        .ToListAsync());
 
 //Get average review score by id of outlet
@@ -80,23 +90,6 @@ app.MapGet("/foodoutlets/{id}/average-rating", async (int id, FoodOutletDb db) =
     var average = await db.Reviews.Where(r => r.FoodOutletId == id).AverageAsync(r => (double?)r.Score);
     return Results.Ok(average ?? 0);
 });
-
-//original working code
-//app.MapPost("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, Review review, FoodOutletDb db) =>
-//{
-//    if (review.Score < 1 || review.Score > 5)
-//    {
-//        return Results.BadRequest("Review score must be between 1 and 5");
-//    }
-//    else if (!await db.FoodOutlets.AnyAsync(fo => fo.Id == foodOutletId))
-//    {
-//        return Results.BadRequest("Food Outlet Not Found");
-//    }
-//    review.FoodOutletId = foodOutletId;
-//    db.Reviews.Add(review);
-//    await db.SaveChangesAsync();
-//    return Results.Created($"/foodoutlets/{foodOutletId}/reviews/{review.Id}", review);
-//});
 
 //authoriaztion required posting review
 app.MapPost("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, Review review, FoodOutletDb db) =>

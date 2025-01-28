@@ -1,5 +1,5 @@
 ﻿@FoodOutletRESTAPIDatabase_HostAddress = https://localhost:7277
-@id = 8
+@id = 10
 @foodOutletId=10
 
 //Foodoutlet actions
@@ -7,10 +7,10 @@
 //Create foodoutlet
 POST {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet
 Content-Type: application/json
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczODE3ODgyMywiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.-KfcIdNxxpPX3dOzlGDNf-BKgmRpPVJ97OnVbY2nzW8
 {
-  "name": "test",
-  "location": "mars"
+  "name": "Admin Cafe",
+  "location": "Poznan PL"
 }
 
 ###
@@ -22,7 +22,6 @@ GET {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet
 
 //get specific outlet
 GET {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
-
 ###
 
 //update foodoutelet
@@ -30,7 +29,7 @@ PUT {{FoodOutletRESTAPIDatabase_HostAddress}}/api/foodoutlet/{{id}}
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczNzk5NzUwMSwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.ZiFqJOr-kubtHjzAWFFKWUFoRwQCAOOsmz1W8l99M34
 {
-  "name": "Kebab King",
+  "name": "Stary Browar",
   "location": "poznan"
 }
 
@@ -93,10 +92,10 @@ GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{foodOutletId}}/revie
 //Post reviews for an outlet using jwt token
 POST {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{foodOutletId}}/reviews
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczNzk5NzUwMSwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.ZiFqJOr-kubtHjzAWFFKWUFoRwQCAOOsmz1W8l99M34
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczODE2NzUxMCwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.pmsnTfSlRQF-q3kpuEJ_y2dTfUeE_xmcUEAzM2B3OCg
 {
-  "comment": "admin review",
-  "score": 5
+  "comment": "admin reviews 3",
+  "score": 2
 }
 
 ###
@@ -114,5 +113,6 @@ GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/{{id}}/average-rating
 GET {{FoodOutletRESTAPIDatabase_HostAddress}}/foodoutlets/top-rated
 
 ###
-
-
+GET {{FoodOutletRESTAPIDatabase_HostAddress}}/api/login/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdHVzZXIiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxIiwiZXhwIjoxNzM4MTg1MzM3LCJpc3MiOiJZb3VySXNzdWVyIiwiYXVkIjoiWW91ckF1ZGllbmNlIn0.47xXj7TFmdEK-FENoTiCWhje0lvjzuJVv-SO9pzeOVg
+###

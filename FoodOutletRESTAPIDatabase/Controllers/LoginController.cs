@@ -1,4 +1,6 @@
-﻿using FoodOutletRESTAPIDatabase.Models;
+﻿using FoodOutletRESTAPIDatabase.DTOs;
+using FoodOutletRESTAPIDatabase.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -27,7 +29,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var user = new User
             {
                 Username = userRegister.Username,
-                Password = userRegister.Password, // Storing plain text password (no hashing)
+                Password = userRegister.Password,
                 Role = "User"
             };
 
@@ -61,6 +63,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin, IConfiguration config)
         {
+            Console.WriteLine($"Login attempt: Username = {userLogin.Username}, Password = {userLogin.Password}");
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
             if (user == null || user.Password != userLogin.Password) // Plain password check
             {
@@ -70,6 +73,12 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             // Generate JWT Token
             var token = GenerateJwtToken(user, config);
             return Ok(new { Token = token });
+        }
+
+        [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> VerifyAdmin() {
+            return Ok();
         }
     }
 }
