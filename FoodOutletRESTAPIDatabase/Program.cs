@@ -58,12 +58,14 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+//cors middleware
+app.UseCors("AllowAll");
 
 // Add middleware for authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
 //cors middleware
-app.UseCors("AllowAll");
+//app.UseCors("AllowAll");
 
 // Map controllers to routes
 app.MapControllers();

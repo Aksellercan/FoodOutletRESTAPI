@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using System.Collections.Generic; // Add this line
+using System.Collections.Generic;
 using FoodOutletRESTAPIDatabase.Models;
 using FoodOutletRESTAPIDatabase.Controllers;
 using FoodOutletRESTAPIDatabase;
@@ -60,13 +60,14 @@ namespace FoodOutletRESTAPITest
                 new FoodOutlet {Id = 10, Name = "Rover", Location = "mars"},
                 new FoodOutlet {Id = 11, Name = "Pizza Hut", Location = "US New York"},
                 new FoodOutlet {Id = 12, Name = "KFC", Location = "US Kentucky"},
-                new FoodOutlet {Id = 14, Name = "Stary Browar", Location = "poznan"},
+                new FoodOutlet {Id = 14, Name = "Stary Browar MC", Location = "poznan"},
                 new FoodOutlet {Id = 15, Name = "Cafe", Location = "Poznan PL"},
                 new FoodOutlet {Id = 16, Name = "Cafe the sequel", Location = "Poznan PL"},
                 new FoodOutlet {Id = 18, Name = "nirvana", Location = "Seattle USA"},
                 new FoodOutlet {Id = 19, Name = "Serve the Servants", Location = "Seattle USA"},
-                new FoodOutlet {Id = 20, Name = "spring", Location = "Seattle USA"},
-                new FoodOutlet {Id = 21, Name = "Blur", Location = "England London"}
+                //new FoodOutlet {Id = 20, Name = "spring", Location = "Seattle USA"},
+                new FoodOutlet {Id = 21, Name = "Blur", Location = "England London"},
+                new FoodOutlet {Id = 23, Name = "sametin yeri", Location = "342 Stary Rynek Poznan"}
             };
 
             // Assert: Check if actual and expected lists are equal
@@ -89,7 +90,6 @@ namespace FoodOutletRESTAPITest
         [TestMethod]
         public async Task PostReview_ShouldReturnSuccess()
         {
-            // Your food outlet ID
             int foodOutletId = 8;
 
             // Review data
@@ -100,7 +100,7 @@ namespace FoodOutletRESTAPITest
             };
 
             // JWT token
-            var jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczODE2NzUxMCwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.pmsnTfSlRQF-q3kpuEJ_y2dTfUeE_xmcUEAzM2B3OCg";
+            var jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczODM1MDY0NCwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.FX4CcHB4-kA0QLqLqAovvpQEdYfxLNYOTOdnxHoIeWw";
 
             // Set the authorization header with the Bearer token
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
