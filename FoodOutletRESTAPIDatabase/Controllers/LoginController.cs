@@ -62,15 +62,20 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin, IConfiguration config)
-        {
-            Console.WriteLine($"Login attempt: Username = {userLogin.Username}, Password = {userLogin.Password}");
+        {   
+            //Debug Login
+            //Console.WriteLine($"Login attempt: Username = {userLogin.Username}, Password = {userLogin.Password}");
+            
+            //get first matching user and assign it to var user
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
-            if (user == null || user.Password != userLogin.Password) // Plain password check
+
+            // Plain password check (no hash to be added later)
+            if (user == null || user.Password != userLogin.Password)
             {
                 return Unauthorized();
             }
 
-            // Generate JWT Token
+            // Generate JWT Token using config from Program.cs
             var token = GenerateJwtToken(user, config);
             return Ok(new { Token = token });
         }
@@ -78,6 +83,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> VerifyAdmin() {
+            Console.WriteLine("Admin Role Verified!");
             return Ok();
         }
     }

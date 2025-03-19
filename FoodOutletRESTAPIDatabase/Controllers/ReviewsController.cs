@@ -1,119 +1,86 @@
-﻿//using FoodOutletRESTAPIDatabase.Models;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.AspNetCore.Authorization;
+﻿using FoodOutletRESTAPIDatabase.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using FoodOutletRESTAPIDatabase.DTOs;
 
-//namespace FoodOutletRESTAPIDatabase.Controllers
-//{
-//    [Authorize(Roles = "User")]
-//    [Route("api/[controller]")]
-//    [ApiController]
-//    public class ReviewsController : ControllerBase
-//    {
-//        private readonly FoodOutletDb _db;
+namespace FoodOutletRESTAPIDatabase.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ReviewsController : ControllerBase
+    {
+        private readonly FoodOutletDb _db;
 
-//        public ReviewsController(FoodOutletDb db)
-//        {
-//            _db = db;
-//        }
+        public ReviewsController(FoodOutletDb db)
+        {
+            _db = db;
+        }
 
-//        // List all reviews for a specific food outlet
-//        [HttpGet("{foodOutletId}")]
-//        public async Task<IActionResult> GetReviews(int foodOutletId)
-//        {
-//            var reviews = await _db.Reviews.Where(r => r.FoodOutletId == foodOutletId).ToListAsync();
-//            return Ok(reviews);
-//        }
+        // List all reviews for a specific food outlet
+        [HttpGet("{foodOutletId}")]
+        public async Task<IActionResult> GetReviews(int foodOutletId)
+        {
+            var reviews = await _db.Reviews.Where(r => foodOutletId == r.FoodOutletId).ToListAsync();
+            return Ok(reviews);
+        }
 
-//        [HttpPost("{foodOutletId}/reviews")]
-//        [Authorize(Roles = "User")]
-//        public async Task<IActionResult> PostReview(int foodOutletId, [FromBody] Review review)
-//        {
-//            Console.WriteLine($"Food Outlet ID: {foodOutletId}");
+        [HttpPost("{outletid}/reviews")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> PostReview([FromRoute] int outletid, Review review)
+        {
+            Console.WriteLine("START PROCESS HERE");
+            Console.WriteLine($"Food Outlet ID detected from URL {outletid}");
+            if (review.Score < 1 || review.Score > 5) return BadRequest("Score must be greater than 0 and lower than 5");
 
-//            if (review.Score < 1 || review.Score > 5)
-//            {
-//                return BadRequest("Review score must be between 1 and 5");
-//            }
-//            else if (!await _db.FoodOutlets.AnyAsync(fo => fo.Id == foodOutletId))
-//            {
-//                return BadRequest("Food Outlet Not Found");
-//            }
-//            review.FoodOutletId = foodOutletId;
-//            _db.Reviews.Add(review);
-//            await _db.SaveChangesAsync();
-//            return Created($"/foodoutlets/{foodOutletId}/reviews/{review.Id}", review);
-//        }
+            //Find the outlet object
+            var foodOutletretrieved = await _db.FoodOutlets.FirstOrDefaultAsync(fo => fo.Id == outletid);
 
-//        [HttpGet]
-//        public async Task<IActionResult> GetReviews()
-//        {
-//            var reviews = await (_db.Reviews.Select(r => new
-//            {
-//                FoodOutlet = new
-//                {
-//                    //r.FoodOutlet.Id,
-//                    //r.FoodOutlet.Name,
-//                },
-//                r.Id,
-//                r.Comment,
-//                r.Score,
-//                r.CreatedAt
-//            }))
-//                .ToListAsync();
-//            return Ok(reviews);
-//        }
+            if (foodOutletretrieved == null) return BadRequest("Outlet doesn't exist");
 
-//        //        app.MapGet("/foodoutlets/{foodOutletId}/reviews", async(int foodOutletId, FoodOutletDb db) =>
-//        //    await db.Reviews
-//        //        .Where(r => r.FoodOutletId == foodOutletId)
-//        //        .Select(r => new
-//        //        {
-//        //            FoodOutlet = new
-//        //            {
-//        //                r.FoodOutlet.Id,
-//        //                r.FoodOutlet.Name,
-//        //                //r.FoodOutlet.Rating
-//        //            },
-//        //            r.Id,
-//        //            r.Comment,
-//        //            r.Score,
-//        //            r.CreatedAt
-//        //        })
-//        //        .ToListAsync());
+            try
+            {
+                review.FoodOutlet = foodOutletretrieved;
 
+                Console.WriteLine("Trying to add review for " + review.FoodOutlet.Id);
+                await _db.Reviews.AddAsync(review);
+                Console.WriteLine("SAVING...");
+                await _db.SaveChangesAsync();
+                Console.WriteLine("FINISHED SUCCESFULLY!");
+            }
+            catch (Exception e) { Console.WriteLine(e + "Failed to add review..."); } //dont forget to change this ;)
 
-//        ////Create
-//        //app.MapPost("/foodoutlets/{foodOutletId}/reviews", async(int foodOutletId, Review review, FoodOutletDb db) =>
-//        //{
-//        //    if (review.Score< 1 || review.Score> 5)
-//        //    {
-//        //        return Results.BadRequest("Review score must be between 1 and 5");
-//        //    } else if (!await db.FoodOutlets.AnyAsync(fo => fo.Id == foodOutletId)) {
-//        //        return Results.BadRequest("Food Outlet Not Found");
-//        //    }
-//        //review.FoodOutletId = foodOutletId;
-//        //db.Reviews.Add(review);
-//        //await db.SaveChangesAsync();
-//        //return Results.Created($"/foodoutlets/{foodOutletId}/reviews/{review.Id}", review);
-//        //});
+            //Create DTO object to return
+            var reviewDTO = new ReviewDTO
+            {
+                Id = review.Id,
+                FoodoutletId = review.FoodOutletId,
+                Comment = review.Comment,
+                Score = review.Score,
+                CreatedAt = review.CreatedAt
+            };
+            return Created($"/foodoutlets/{outletid}/reviews/{review.Id}", reviewDTO);
+        
+        }
 
-//        //// List all reviews
-//        //app.MapGet("/reviews", async (FoodOutletDb db) =>
-//        //    await db.Reviews
-//        //        .Select(r => new
-//        //        {
-//        //            FoodOutlet = new
-//        //            {
-//        //                r.FoodOutlet.Id,
-//        //                r.FoodOutlet.Name,
-//        //                //r.FoodOutlet.Rating
-//        //            },
-//        //            r.Id,
-//        //            r.Comment,
-//        //            r.Score,
-//        //            r.CreatedAt
-//        //        })
-//        //        .ToListAsync());
-//    }
-//}
+        //To Add later: list reviews from one user
+        [HttpGet]
+        public async Task<IActionResult> GetReviews()
+        {
+            var reviews = await (_db.Reviews.Select(r => new
+            {
+                FoodOutlet = new
+                {
+                    //r.FoodOutlet.Id,
+                    //r.FoodOutlet.Name,
+                },
+                r.Id,
+                r.Comment,
+                r.Score,
+                r.CreatedAt
+            }))
+                .ToListAsync();
+            return Ok(reviews);
+        }
+    }
+}

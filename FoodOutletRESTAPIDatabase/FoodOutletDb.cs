@@ -12,7 +12,7 @@ namespace FoodOutletRESTAPIDatabase
         public DbSet<FoodOutlet> FoodOutlets => Set<FoodOutlet>();
         public DbSet<Review> Reviews => Set<Review>();
 
-        public DbSet<User> Users => Set<User>(); // Add this line
+        public DbSet<User> Users => Set<User>();
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

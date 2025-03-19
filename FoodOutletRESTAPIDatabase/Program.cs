@@ -1,20 +1,17 @@
 using FoodOutletRESTAPIDatabase;
-using FoodOutletRESTAPIDatabase.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-//builder.Services.AddDbContext<FoodOutletDb>(opt => opt.UseInMemoryDatabase("FoodOutlet"));
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FoodOutletDb>(opt => opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-//builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-//builder.Services.AddDirectoryBrowser();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -34,13 +31,32 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnAuthenticationFailed = context =>
             {
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
                 Console.WriteLine("Authentication failed: " + context.Exception.Message);
-                return Task.CompletedTask;
+                return context.Response.WriteAsync(result);
             },
             OnChallenge = context =>
             {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                var result = JsonConvert.SerializeObject(new { error = "Authorization failed! Try again with valid token." });
                 Console.WriteLine("Authorization failed: " + context.ErrorDescription);
+                return context.Response.WriteAsync(result);
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("Token Validated");
                 return Task.CompletedTask;
+            },
+            OnForbidden = context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+                var result = JsonConvert.SerializeObject(new { error = "You  don't have access to this content" });
+                Console.WriteLine("You lack the privilages to access this content");
+                return context.Response.WriteAsync(result);
             }
         };
 
@@ -64,8 +80,6 @@ app.UseCors("AllowAll");
 // Add middleware for authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
-//cors middleware
-//app.UseCors("AllowAll");
 
 // Map controllers to routes
 app.MapControllers();
@@ -83,7 +97,6 @@ await db.FoodOutlets
            ReviewCount = fo.Reviews.Count
        })
        .OrderByDescending(fo => fo.Rating)
-       //.Take(5) //only shows 5
        .ToListAsync());
 
 //Get average review score by id of outlet
@@ -92,58 +105,6 @@ app.MapGet("/foodoutlets/{id}/average-rating", async (int id, FoodOutletDb db) =
     var average = await db.Reviews.Where(r => r.FoodOutletId == id).AverageAsync(r => (double?)r.Score);
     return Results.Ok(average ?? 0);
 });
-
-//authoriaztion required posting review
-app.MapPost("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, Review review, FoodOutletDb db) =>
-{
-    if (review.Score < 1 || review.Score > 5)
-    {
-        return Results.BadRequest("Review score must be between 1 and 5");
-    }
-    else if (!await db.FoodOutlets.AnyAsync(fo => fo.Id == foodOutletId))
-    {
-        return Results.BadRequest("Food Outlet Not Found");
-    }
-    review.FoodOutletId = foodOutletId;
-    db.Reviews.Add(review);
-    await db.SaveChangesAsync();
-    return Results.Created($"/foodoutlets/{foodOutletId}/reviews/{review.Id}", review);
-}).RequireAuthorization();
-
-app.MapGet("/reviews", async (FoodOutletDb db) =>
-    await db.Reviews
-        .Select(r => new
-        {
-            FoodOutlet = new
-            {
-                r.FoodOutlet.Id,
-                r.FoodOutlet.Name,
-                //r.FoodOutlet.Rating
-            },
-            r.Id,
-            r.Comment,
-            r.Score,
-            r.CreatedAt
-        })
-        .ToListAsync());
-
-app.MapGet("/foodoutlets/{foodOutletId}/reviews", async (int foodOutletId, FoodOutletDb db) =>
-    await db.Reviews
-        .Where(r => r.FoodOutletId == foodOutletId)
-        .Select(r => new
-        {
-            FoodOutlet = new
-            {
-                r.FoodOutlet.Id,
-                r.FoodOutlet.Name,
-                //r.FoodOutlet.Rating
-            },
-            r.Id,
-            r.Comment,
-            r.Score,
-            r.CreatedAt
-        })
-        .ToListAsync());
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
