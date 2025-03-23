@@ -46,9 +46,9 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 await _db.Reviews.AddAsync(review);
                 Console.WriteLine("SAVING...");
                 await _db.SaveChangesAsync();
-                Console.WriteLine("FINISHED SUCCESFULLY!");
+                Console.WriteLine("FINISHED SUCCESSFULLY!");
             }
-            catch (Exception e) { Console.WriteLine(e + "Failed to add review..."); } //dont forget to change this ;)
+            catch (Exception e) { Console.WriteLine(e + "Failed to add review..."); }
 
             //Create DTO object to return
             var reviewDTO = new ReviewDTO
