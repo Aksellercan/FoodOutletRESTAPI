@@ -48,7 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 context.Response.StatusCode = 403;
                 context.Response.ContentType = "application/json";
                 var result = JsonConvert.SerializeObject(new { error = "You  don't have access to this content" });
-                Console.WriteLine("You lack the privilages to access this content");
+                Console.WriteLine("You lack the privileges to access this content");
                 return context.Response.WriteAsync(result);
             }
         };
