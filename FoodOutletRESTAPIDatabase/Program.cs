@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -31,18 +32,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnAuthenticationFailed = context =>
             {
-                context.Response.StatusCode = 401;
+                //context.Response.StatusCode = 401;
                 context.Response.ContentType = "application/json";
                 var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
                 Console.WriteLine("Authentication failed: " + context.Exception.Message);
-                return context.Response.WriteAsync(result);
-            },
-            OnChallenge = context =>
-            {
-                context.HandleResponse();
-                context.Response.StatusCode = 401;
-                var result = JsonConvert.SerializeObject(new { error = "Authorization failed! Try again with valid token." });
-                Console.WriteLine("Authorization failed: " + context.ErrorDescription);
                 return context.Response.WriteAsync(result);
             },
             OnTokenValidated = context =>

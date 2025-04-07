@@ -14,7 +14,6 @@ namespace FoodOutletRESTAPIDatabase
 
         public DbSet<User> Users => Set<User>();
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure FoodOutlet entity
@@ -43,6 +42,7 @@ namespace FoodOutletRESTAPIDatabase
                       .IsRequired()
                       .HasDefaultValueSql("CURRENT_TIMESTAMP"); // Default value for timestamps
             });
+
         }
     }
 }

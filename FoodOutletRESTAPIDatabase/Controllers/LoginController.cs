@@ -63,8 +63,6 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin, IConfiguration config)
         {   
-            //Debug Login
-            //Console.WriteLine($"Login attempt: Username = {userLogin.Username}, Password = {userLogin.Password}");
             
             //get first matching user and assign it to var user
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
