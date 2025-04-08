@@ -24,7 +24,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var currentUserId = claimCurrentUserId?.Value;
             if (currentUserId == null)
             {
-                return 0;
+                throw new UnauthorizedAccessException("Unauthenticated or user not found");
             }
             return int.Parse(currentUserId);
         }
@@ -55,7 +55,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             try
             {
                 review.FoodOutlet = foodOutletretrieved;
-                //review.UserId = curentUserId;
+                review.UserId = curentUserId;
                 await _db.Reviews.AddAsync(review);
                 await _db.SaveChangesAsync();
             }
@@ -76,26 +76,23 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         }
 
         //To Add later: list reviews from one user
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> GetReviews()
-        //{
-        //   var userReviews = await _db.Reviews.Where(r => r.UserId == currentUserId).ToListAsync();
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetReviewsfromUser()
+        {
+            var userReviews = await _db.Reviews.Where(r => r.UserId == getCurrentUserId()).Select(r => new {
+            FoodOutlet = new { 
+                r.FoodOutletId,
+                r.FoodOutlet.Name
+            },
+            r.Id,
+            r.Comment,
+            r.Score,
+            r.CreatedAt
+            }).ToListAsync();
 
-        //    var reviews = userReviews.Select(r => new
-        //    {
-        //        FoodOutlet = new
-        //        {
-        //            //r.FoodOutlet.Id,
-        //            //r.FoodOutlet.Name,
-        //        },
-        //        r.Id,
-        //        r.Comment,
-        //        r.Score,
-        //        r.CreatedAt
-        //    }).ToList();
-
-        //    return Ok(reviews);
-        //}
+            Console.WriteLine(userReviews.Count);
+            return Ok(userReviews);
+        }
     }
 }

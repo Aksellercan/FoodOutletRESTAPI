@@ -43,6 +43,12 @@ namespace FoodOutletRESTAPIDatabase
                       .HasDefaultValueSql("CURRENT_TIMESTAMP"); // Default value for timestamps
             });
 
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Reviews)
+                .WithOne(r => r.User)
+                .HasForeignKey(r => r.UserId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
