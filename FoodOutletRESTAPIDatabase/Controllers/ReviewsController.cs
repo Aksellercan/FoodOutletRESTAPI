@@ -46,14 +46,11 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
             //Find the outlet object
             var foodOutletretrieved = await _db.FoodOutlets.FirstOrDefaultAsync(fo => fo.Id == outletid);
-
             if (foodOutletretrieved == null) return BadRequest("Outlet doesn't exist");
-
-            int curentUserId = getCurrentUserId();
-            if (curentUserId == 0) return BadRequest("User not found");
 
             try
             {
+                int curentUserId = getCurrentUserId();
                 review.FoodOutlet = foodOutletretrieved;
                 review.UserId = curentUserId;
                 await _db.Reviews.AddAsync(review);
@@ -75,7 +72,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return Created($"/foodoutlets/{outletid}/reviews/{review.Id}", reviewDTO);
         }
 
-        //To Add later: list reviews from one user
+        //List reviews from one user
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetReviewsfromUser()
