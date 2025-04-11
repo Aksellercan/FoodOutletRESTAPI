@@ -1,11 +1,14 @@
 ﻿using FoodOutletRESTAPIDatabase.DTOs;
 using FoodOutletRESTAPIDatabase.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace FoodOutletRESTAPIDatabase.Controllers
@@ -32,6 +35,9 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 Password = userRegister.Password,
                 Role = "User"
             };
+            Console.WriteLine($"Before hashing: {user.Password}");
+            user.Password = HashPassword(userRegister.Password); // Hash the password before saving
+            Console.WriteLine($"Hashed password: {user.Password}");
 
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
@@ -59,6 +65,19 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        private string HashPassword(string password) { 
+        
+            byte[] salt = RandomNumberGenerator.GetBytes(128/8);
+            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+            string hashedpassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password!,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 10000,
+                numBytesRequested: 256/8));
+            Console.WriteLine($"Hashed: {hashedpassword}");
+            return hashedpassword;
+        }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin, IConfiguration config)

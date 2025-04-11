@@ -28,6 +28,20 @@
         <button type="submit">Register</button>
     </form>
 
+    <h2>Send Review</h2>
+    <form id="reviewForm">
+        <label for="regComment">Comment: </label>
+        <input type="text" id="regComment" name="comment" required />
+        <br></br>
+        <label for="regScore">Score: </label>
+        <input type="number" id="regScore" name="score" required />
+        <br></br>
+        <label for="regFoodoutletid">Food Outlet ID: </label>
+        <input type="number" id="regFoodoutletid" name="foodoutletid" required />
+        <br></br>
+        <button type="submit">Comment</button>
+    </form>
+
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -50,7 +64,8 @@
 
             if (response.ok) {
                 alert('Login successful');
-                console.log('Token:', result.token); // You can store this token in localStorage or in cookies
+                localStorage.setItem('token', result.token);
+                console.log('Token:', result.token);
             } else {
                 alert('Login failed');
                 console.log(result);
@@ -81,6 +96,38 @@
                 console.log(result);
             } else {
                 alert('Registration failed');
+                console.log(result);
+            }
+        });
+
+        document.getElementById('reviewForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const comment = document.getElementById('regComment').value;
+            const score = document.getElementById('regScore').value;
+            const foodoutletid = document.getElementById('regFoodoutletid').value
+
+            if (score < 1 || score > 5) alert('Score must be between 1 and 5');
+
+            const response = await fetch(`/api/reviews/${foodoutletid}/reviews`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    comment: comment,
+                    score: score
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Submission successful');
+                console.log(result);
+            } else {
+                alert('Submission failed');
                 console.log(result);
             }
         });
