@@ -28,6 +28,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
 
+        //TODO: custom jwt messages causing middleware issues
+        /*
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
@@ -42,17 +44,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             {
                 Console.WriteLine("Token Validated");
                 return Task.CompletedTask;
-            },
+            }
+            ,
             OnForbidden = context =>
             {
-                context.Response.StatusCode = 403;
+                //context.Response.StatusCode = 403;
                 context.Response.ContentType = "application/json";
                 var result = JsonConvert.SerializeObject(new { error = "You  don't have access to this content" });
                 Console.WriteLine("You lack the privileges to access this content");
                 return context.Response.WriteAsync(result);
             }
         };
-
+        */
     });
 
 
@@ -76,28 +79,6 @@ app.UseAuthorization();
 
 // Map controllers to routes
 app.MapControllers();
-
-// Advanced Queries
-//Sort by top rating
-app.MapGet("/foodoutlets/top-rated", async (FoodOutletDb db) =>
-await db.FoodOutlets
-       .Select(fo => new
-       {
-           fo.Id,
-           fo.Name,
-           fo.Location,
-           Rating = fo.Reviews.Any() ? Math.Round(fo.Reviews.Average(r => r.Score), 1) : 0,
-           ReviewCount = fo.Reviews.Count
-       })
-       .OrderByDescending(fo => fo.Rating)
-       .ToListAsync());
-
-//Get average review score by id of outlet
-app.MapGet("/foodoutlets/{id}/average-rating", async (int id, FoodOutletDb db) =>
-{
-    var average = await db.Reviews.Where(r => r.FoodOutletId == id).AverageAsync(r => (double?)r.Score);
-    return Results.Ok(average ?? 0);
-});
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

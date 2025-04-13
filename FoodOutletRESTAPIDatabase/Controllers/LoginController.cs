@@ -66,7 +66,6 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         }
 
         private string HashPassword(string password) { 
-        
             byte[] salt = RandomNumberGenerator.GetBytes(128/8);
             Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
             string hashedpassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(

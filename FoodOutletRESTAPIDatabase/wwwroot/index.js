@@ -2,6 +2,7 @@ function clearStorage() {
     localStorage.removeItem('token');
     console.log("cleared token");
 }
+
 document.getElementById('loginForm').addEventListener('submit', async function (event) {
     event.preventDefault();
     const username = document.getElementById('username').value;
@@ -87,3 +88,13 @@ document.getElementById('reviewForm').addEventListener('submit', async function 
         console.log(result);
     }
 });
+
+const btnEl = document.querySelector('.btnTest');
+
+function fetchOutletList(){
+    const response = fetch ('/api/foodoutlet')
+    .then(response => response.json())
+    .then(data => console.log(data))
+}
+
+btnEl.addEventListener('click',fetchOutletList);

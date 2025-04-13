@@ -88,5 +88,28 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             await _db.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpGet("top-rated")]
+        public async Task<IActionResult> TopRated()
+        {
+            var toprated = await _db.FoodOutlets.Select(fo => new
+            {
+                fo.Id,
+                fo.Name,
+                fo.Location,
+                Rating = fo.Reviews.Any() ? Math.Round(fo.Reviews.Average(r => r.Score), 1) : 0,
+                ReviewCount = fo.Reviews.Count
+            }
+            ).ToListAsync();
+
+            return Ok(toprated);
+        }
+
+        [HttpGet("{id}/average-rating")]
+        public async Task<IActionResult> GetAverageRating([FromRoute] int id)
+        {
+            var averageRating = await _db.Reviews.Where(r => r.FoodOutletId == id).AverageAsync(r => (double?)r.Score);
+            return Ok(averageRating);
+        }
     }
 }

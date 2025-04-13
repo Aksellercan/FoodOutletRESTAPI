@@ -2,12 +2,18 @@ h2{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: lightblue;
     text-shadow: lightcyan 1px 0 10px;
+	text-align: justify;
 }
 
 label{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: bold;
     color: lightblue;
+}
+
+form {
+	margin-top: 1cm;
+	text-align: justify;
 }
 
 button {
@@ -24,6 +30,7 @@ button {
 	padding:9px 23px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #263666;
+	margin-left: 5px;
 }
 button:hover {
 	background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
@@ -43,4 +50,19 @@ input {
 body {
     background-color: rgb(51, 51, 51);
     text-align: center;
-    }
+}
+
+.listH2{
+	/* text-align: center; */
+	width:1000px; 
+	float:right; 
+	clear:right; 
+	margin-top: -645px; 
+}
+.btnTest{
+	width:100px;
+	margin-right: 925px;
+	float:right; 
+	clear:right; 
+	margin-top: -600px; 
+}
