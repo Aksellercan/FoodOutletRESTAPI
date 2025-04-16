@@ -32,6 +32,7 @@ button {
 	text-shadow:0px 1px 0px #263666;
 	margin-left: 5px;
 }
+
 button:hover {
 	background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
 	background-color:#0688fa;
@@ -59,10 +60,35 @@ body {
 	clear:right; 
 	margin-top: -645px; 
 }
-.btnTest{
+
+.btnList{
 	width:100px;
 	margin-right: 925px;
 	float:right; 
 	clear:right; 
 	margin-top: -600px; 
+}
+
+.badgeofHonour{
+	text-align: center;
+}
+
+#outletShowList{
+	margin-right: 760px;
+	float:right; 
+	clear:right; 
+	margin-top: -550px;
+	background-color: #0b0e07;
+	border-color: #ffffff;
+	border-style: solid;
+}
+
+#outletShowList p{
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+	text-align: left;
+	display: list-item;
+	list-style-position: inside;
+	padding-right: 10px;
+	padding-left: 10px;
+	color: #ffffff;
 }

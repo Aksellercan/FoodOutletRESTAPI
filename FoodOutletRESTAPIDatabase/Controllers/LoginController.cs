@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -65,40 +64,49 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string HashPassword(string password) { 
-            byte[] salt = RandomNumberGenerator.GetBytes(128/8);
+        private string HashPassword(string password)
+        {
+            //byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+            byte[] salt = new byte[16];
             Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
             string hashedpassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
-                numBytesRequested: 256/8));
+                numBytesRequested: 256 / 8));
             Console.WriteLine($"Hashed: {hashedpassword}");
             return hashedpassword;
         }
 
+        private bool DeHashPassword(string enteredPassword, string userPassword) 
+        {
+            string hashedpassword = HashPassword(enteredPassword);
+            Console.WriteLine($"Hashed: {hashedpassword}");
+            if (string.Equals(userPassword,hashedpassword))
+            {
+                return true;
+            }
+            return false;
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin, IConfiguration config)
-        {   
-            
-            //get first matching user and assign it to var user
+        {
+            // Get first matching user
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
+            
+            // Check by comparing hashes (Not secure at the moment)
+            if (!DeHashPassword(userLogin.Password, user.Password)) return Unauthorized();
 
-            // Plain password check (no hash to be added later)
-            if (user == null || user.Password != userLogin.Password)
-            {
-                return Unauthorized();
-            }
-
-            // Generate JWT Token using config from Program.cs
             var token = GenerateJwtToken(user, config);
             return Ok(new { Token = token });
         }
 
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> VerifyAdmin() {
+        public async Task<IActionResult> VerifyAdmin()
+        {
             Console.WriteLine("Admin Role Verified!");
             return Ok();
         }

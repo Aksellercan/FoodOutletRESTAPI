@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-
-namespace FoodOutletRESTAPIDatabase.Models
+﻿namespace FoodOutletRESTAPIDatabase.Models
 {
     public class Review
     {

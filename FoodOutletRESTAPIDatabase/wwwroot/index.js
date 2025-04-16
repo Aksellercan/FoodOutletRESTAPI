@@ -89,12 +89,21 @@ document.getElementById('reviewForm').addEventListener('submit', async function 
     }
 });
 
-const btnEl = document.querySelector('.btnTest');
+document.getElementById('btnList').addEventListener('click', async function (event) {
+    event.preventDefault();
 
-function fetchOutletList(){
-    const response = fetch ('/api/foodoutlet')
-    .then(response => response.json())
-    .then(data => console.log(data))
-}
+    const response = await fetch ('/api/foodoutlet');
+    const data = await response.json();
 
-btnEl.addEventListener('click',fetchOutletList);
+    const resultDiv = document.getElementById('outletShowList');
+    resultDiv.innerHTML = "";
+    for(let i = 0; i < data.length; i++)
+    {
+        const outlet = data[i];
+        console.log(data[i])
+
+        const outletLine = document.createElement('p');
+        outletLine.textContent = ` ${outlet.name} - ${outlet.location} (${outlet.rating} stars from ${outlet.reviewCount} reviews) `;
+        resultDiv.appendChild(outletLine);
+    }
+});

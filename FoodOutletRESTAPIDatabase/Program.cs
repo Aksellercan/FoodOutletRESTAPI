@@ -27,39 +27,53 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
-
-        //TODO: custom jwt messages causing middleware issues
-        /*
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
             {
-                //context.Response.StatusCode = 401;
-                context.Response.ContentType = "application/json";
-                var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
-                Console.WriteLine("Authentication failed: " + context.Exception.Message);
-                return context.Response.WriteAsync(result);
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.StatusCode = 401;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
+                    Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                    return context.Response.WriteAsync(result);
+                }
+                return Task.CompletedTask;
             },
             OnTokenValidated = context =>
             {
                 Console.WriteLine("Token Validated");
                 return Task.CompletedTask;
-            }
-            ,
+            },
+            OnChallenge = context => 
+            {
+                context.HandleResponse();
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.StatusCode = 401;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonConvert.SerializeObject(new { error = "You are not authenticated!" });
+                    return context.Response.WriteAsync(result);
+                }
+                return Task.CompletedTask;
+            },
             OnForbidden = context =>
             {
-                //context.Response.StatusCode = 403;
-                context.Response.ContentType = "application/json";
-                var result = JsonConvert.SerializeObject(new { error = "You  don't have access to this content" });
-                Console.WriteLine("You lack the privileges to access this content");
-                return context.Response.WriteAsync(result);
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.StatusCode = 403;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonConvert.SerializeObject(new { error = "You  don't have access to this content" });
+                    Console.WriteLine("You lack the privileges to access this content");
+                    return context.Response.WriteAsync(result);
+                }
+                return Task.CompletedTask;
             }
         };
-        */
     });
 
-
-//Cors testing
+// Cors testing
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -70,10 +84,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-//cors middleware
+
+// Cors middleware
 app.UseCors("AllowAll");
 
-// Add middleware for authentication and authorization
+// Middleware for authentication and authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

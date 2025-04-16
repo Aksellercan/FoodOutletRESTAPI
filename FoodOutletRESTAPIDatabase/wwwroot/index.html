@@ -1,57 +1,57 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
-    <link rel="icon" type="images/x-icon" href="favicon.ico">
-    <title>Control Panel</title>
-</head>
-
-<body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br><br>
-        <button type="submit">Login</button>
-        <button onclick="clearStorage()">Logout</button>
-    </form>
-
-    <h2>Register</h2>
-    <form id="registerForm">
-        <label for="regUsername">Username:</label>
-        <input type="text" id="regUsername" name="username" required>
-        <br><br>
-        <label for="regPassword">Password:</label>
-        <input type="password" id="regPassword" name="password" required>
-        <br><br>
-        <button type="submit">Register</button>
-    </form>
-
-    <h2>Send Review</h2>
-    <form id="reviewForm">
-        <label for="regComment">Comment: </label>
-        <input type="text" id="regComment" name="comment" />
-        <br></br>
-        <label for="regScore">Score: </label>
-        <input type="number" id="regScore" name="score" required />
-        <br></br>
-        <label for="regFoodoutletid">Food Outlet ID: </label>
-        <input type="number" id="regFoodoutletid" name="foodoutletid" required />
-        <br></br>
-        <button type="submit">Comment</button>
-    </form>
-
-    <h2 class="listH2">List</h2>
-    <div class="listDiv">
-        <button class="btnTest">List Get</button>
-    </div>
-    <script src="index.js"></script>
-</body>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="index.css">
+        <link rel="icon" type="images/x-icon" href="favicon.ico">
+        <title>Control Panel</title>
+    </head>
+    <body>
+        <h2>Login</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br><br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br><br>
+                <button type="submit">Login</button>
+                <button type="button" onclick="clearStorage()">Logout</button>
+            </form>
+        <h2>Register</h2>
+            <form id="registerForm">
+                <label for="regUsername">Username:</label>
+                <input type="text" id="regUsername" name="username" required>
+                <br><br>
+                <label for="regPassword">Password:</label>
+                <input type="password" id="regPassword" name="password" required>
+                <br><br>
+                <button type="submit">Register</button>
+            </form>
+        <h2>Send Review</h2>
+            <form id="reviewForm">
+                <label for="regComment">Comment: </label>
+                <input type="text" id="regComment" name="comment" />
+                <br></br>
+                <label for="regScore">Score: </label>
+                <input type="number" id="regScore" name="score" required />
+                <br></br>
+                <label for="regFoodoutletid">Food Outlet ID: </label>
+                <input type="number" id="regFoodoutletid" name="foodoutletid" required />
+                <br></br>
+                <button type="submit">Comment</button>
+            </form>
+        <h2 class="listH2">List</h2>
+            <div class="listDiv">
+                <button class="btnList" id="btnList">Refresh</button>
+            </div>
+            <div id="outletShowList"></div>
+        <script src="index.js"></script>
+        <p class="badgeofHonour">
+            <a href="https://jigsaw.w3.org/css-validator/check/referer">
+                <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!"/>
+            </a>
+        </p>
+    </body>
 </html>
