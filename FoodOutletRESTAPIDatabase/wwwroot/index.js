@@ -1,5 +1,6 @@
 function clearStorage() {
     localStorage.removeItem('token');
+    alert("cleared token");
     console.log("cleared token");
 }
 
