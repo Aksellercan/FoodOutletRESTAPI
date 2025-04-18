@@ -18,7 +18,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             _db = db;
         }
 
-        public int getCurrentUserId()
+        private int getCurrentUserId()
         {
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             var currentUserId = claimCurrentUserId?.Value;

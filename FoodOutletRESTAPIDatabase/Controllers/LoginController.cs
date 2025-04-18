@@ -95,7 +95,8 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         {
             // Get first matching user
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
-            
+
+            if (user == null) return NotFound("login error: User not found");
             // Check by comparing hashes (Not secure at the moment)
             if (!DeHashPassword(userLogin.Password, user.Password)) return Unauthorized();
 
@@ -103,12 +104,34 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return Ok(new { Token = token });
         }
 
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> getUser([FromRoute] int userId) 
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound("User not found");
+            return Ok(user.Username);
+        }
+
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> VerifyAdmin()
+        public IActionResult VerifyAdmin()
         {
             Console.WriteLine("Admin Role Verified!");
             return Ok();
+        }
+
+        // This endpoint is for testing purposes only. It returns the current user's name to display on homepage.
+        [HttpGet("testPoint")]
+        [Authorize]
+        public IActionResult getUserCurrently()
+        {
+            var claimCurrentUserId = User.FindFirst(ClaimTypes.Name);
+            var currentUserId = claimCurrentUserId?.Value;
+            if (currentUserId == null)
+            {
+                return BadRequest("Unauthenticated or user not found");
+            }
+            return Ok(currentUserId);
         }
     }
 }
