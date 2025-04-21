@@ -68,21 +68,18 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         {
             //byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
             byte[] salt = new byte[16];
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
             string hashedpassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
-            Console.WriteLine($"Hashed: {hashedpassword}");
             return hashedpassword;
         }
 
-        private bool DeHashPassword(string enteredPassword, string userPassword) 
+        private bool compareHashPassword(string enteredPassword, string userPassword) 
         {
             string hashedpassword = HashPassword(enteredPassword);
-            Console.WriteLine($"Hashed: {hashedpassword}");
             if (string.Equals(userPassword,hashedpassword))
             {
                 return true;
@@ -98,7 +95,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
             if (user == null) return NotFound("login error: User not found");
             // Check by comparing hashes (Not secure at the moment)
-            if (!DeHashPassword(userLogin.Password, user.Password)) return Unauthorized();
+            if (!compareHashPassword(userLogin.Password, user.Password)) return Unauthorized();
 
             var token = GenerateJwtToken(user, config);
             return Ok(new { Token = token });

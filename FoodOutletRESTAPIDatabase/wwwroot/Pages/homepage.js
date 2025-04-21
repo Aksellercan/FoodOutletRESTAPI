@@ -1,11 +1,12 @@
+let id;
+const mainContent = document.getElementById('content');;
+
 document.addEventListener("DOMContentLoaded", async function (event) { //runs on page load
     event.preventDefault();
-    let id;
     const outletList = await getOutletList();
     const resultDiv = document.getElementById('outletShowList');
 
     //show logged in user (for testing)
-    const loggedinUser = document.getElementById('asidePanelP2');
     const testResponse = await fetch('/api/login/testPoint', {
         method: "GET",
         headers: {
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
     });
     const currUser = await testResponse.text();
     console.log("currUser raw text:", currUser);
-    loggedinUser.innerHTML = `<p id='userNameNav'>Current User: ${currUser}</p>`;
+    document.getElementById('loggedUserP').textContent = `Current User: ${currUser}`;
 
     //continue
     if (outletList.length > 0) {
@@ -26,12 +27,9 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
             outletLine.addEventListener('click', async function (event) {
                 event.preventDefault();
                 if (outlet.id == id) { return; } //avoid loading same data
-                const reviews = await getReviews(outlet.id);
-                //<main> id="content" section
-                const mainContent = document.getElementById('content');
-                mainContent.innerHTML = `<h2 id="contentH2">Reviews for ${outlet.name}</h2>`;
-                reviewLayout(reviews, mainContent);
-                reviewFormLayout(mainContent, outlet.id);
+                loadReviews(outlet.id);
+                mainContent.innerHTML = "";
+                document.getElementById('titleHeader').textContent = `Reviews for ${outlet.name}`;
                 id = outlet.id;
             });
         }
@@ -39,6 +37,14 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
         resultDiv.innerHTML = "<h2 class=\"listH2\">No outlets found</h2>";
     }
 });
+
+async function loadReviews(outletId) {
+    const reviews = await getReviews(outletId);
+                //<main> id="content" section
+                reviewLayout(reviews);
+                reviewFormLayout(outletId);
+                id = outletId;
+}
 
 //Display outlet list
 function outletListLayout(outlet, resultDiv) {
@@ -72,7 +78,7 @@ async function getReviews(outletId) {
 }
 
 //Display reviews
-async function reviewLayout(reviews, mainContent) {
+async function reviewLayout(reviews) {
     if (reviews.length > 0) {
         for (let i = 0; i < reviews.length; i++) {
             const review = reviews[i];
@@ -107,48 +113,67 @@ async function reviewLayout(reviews, mainContent) {
 }
 
 //Post Review
-async function postReviewBody(comment, score, outletId){
-    if (score < 1 || score > 5) alert('Score must be between 1 and 5');
-    const response = await fetch(`/api/reviews/${outletId}/reviews`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('token')
-        },
-        body: JSON.stringify({
-            comment: comment,
-            score: score
-        })
-    });
-    const result = await response.text();
-    if (response.ok) {
-        alert('Submission successful ' + result);
-    } else {
-        alert('Submission failed. ' + result);
-        console.log(result);
+async function postReviewBody(comment, score, outletId) {
+    try {
+        if (score < 1 || score > 5) {
+            throw new Error(`Score must be between 1 and 5`);
+        }
+        const response = await fetch(`/api/reviews/${outletId}/reviews`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify({
+                comment: comment,
+                score: score
+            })
+        });
+        const result = await response.json();
+        const error = await result.error;
+        if (response.ok) {
+            alert('Submission successful ');
+            mainContent.innerHTML = "";
+            await loadReviews(outletId);
+        } else {
+            throw new Error(`Submission failed. ${error}`);
+        }
+    } catch (e) {
+        alert(e);
+        console.log(e);
     }
 }
 
 //Review form
-function reviewFormLayout(mainContent, outletid){
+function reviewFormLayout(outletid){
     const postRating = document.createElement('input');
     postRating.id = "inputboxRating";
     postRating.type = "number";
+    postRating.style.height = "25px";
+    postRating.style.fontSize = "14pt";
+    postRating.max = 5;
+    postRating.min = 1;
     postRating.required;
 
     const postReview = document.createElement('input');
     postReview.id = "inputboxComment";
     postReview.type = "text";
+    postReview.style.height = "25px";
+    postReview.style.fontSize = "14pt";
 
-    const postButton = document.createElement('button');
-    postButton.type = "click";
-    postButton.textContent = "Comment";
+    // const postButton = document.createElement('button');
+    // postButton.type = "click";
+    // postButton.textContent = "Comment";
+
+    const postButton = document.createElement('a');
+    postButton.href = "#";
+    postButton.className = "myButton";
+    postButton.textContent = "Submit";
 
     postButton.addEventListener('click', function(event){
         event.preventDefault();
         const score = postRating.value;
         const comment = postReview.value;
-        console.log("DOES THIS DO ANYTHING");
         postReviewBody(comment, score, outletid);
     });
 
@@ -159,3 +184,11 @@ function reviewFormLayout(mainContent, outletid){
     mainContent.appendChild(postButton);
 }
 
+//logout (for testing)
+function clearStorage() {
+    if (localStorage.getItem('token') == null){return;}
+    localStorage.removeItem('token');
+    alert("cleared token");
+    console.log("cleared token");
+    location.reload();
+}

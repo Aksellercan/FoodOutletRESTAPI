@@ -23,7 +23,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             var currentUserId = claimCurrentUserId?.Value;
             if (currentUserId == null)
-            {
+            { 
                 throw new UnauthorizedAccessException("Unauthenticated or user not found");
             }
             return int.Parse(currentUserId);
@@ -41,7 +41,6 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [Authorize(Roles = "User")]
         public async Task<IActionResult> PostReview([FromRoute] int outletid, Review review)
         {
-            Console.WriteLine($"Food Outlet ID detected from URL {outletid}");
             if (review.Score < 1 || review.Score > 5) return BadRequest("Score must be greater than 0 and lower than 5");
 
             //Find the outlet object

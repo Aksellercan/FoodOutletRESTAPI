@@ -6,16 +6,21 @@
     <body>
         <div class="container">
             <header>
-                <a id="linkTest" href="../index.html">Home</a>
+                <div id="loggedUser">
+                    <a id="linkTest" href="../index.html">Home</a>
+                    <button id="loggedUserP" class="secretButton" onclick="clearStorage()"></button>
+                </div>
             </header>
             <nav>
                 <h2 class="listH2">List</h2>
                 <div id="outletShowList"></div>
             </nav>
-            <main id="content"></main>
+            <main id="main">
+                <h2 id="titleHeader"></h2>
+                <div id="content"></div>
+            </main>
             <aside>
                 <p id="asidePanelP">I'm an aside panel</p>
-                <div id="asidePanelP2"></div>
             </aside>
         </div>
         <script src="homepage.js"></script>
