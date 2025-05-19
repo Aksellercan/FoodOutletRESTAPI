@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
     const resultDiv = document.getElementById('outletShowList');
 
     //show logged in user (for testing)
-    const testResponse = await fetch('/api/login/testPoint', {
+    const testResponse = await fetch('/api/login/CurrentUser', {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
@@ -57,10 +57,18 @@ function outletListLayout(outlet, resultDiv) {
 }
 
 //Display username
-async function getUserName(userId) {
-    const response = await fetch(`/api/login/${userId}`);
+async function getUserName(response) {
     const userName = await response.text();
+    console.log(`Username ${userName} and status code ${response.status}`);
     return userName;
+}
+
+function doesUserExist(response) {
+    if (response.status === 404) {
+        return false;
+    } else {
+        return true
+    }
 }
 
 //Fetch outlet list
@@ -82,7 +90,11 @@ async function reviewLayout(reviews) {
     if (reviews.length > 0) {
         for (let i = 0; i < reviews.length; i++) {
             const review = reviews[i];
-            const userName = await getUserName(review.userId);
+            const response = await fetch(`/api/login/${review.userId}`);
+            if (!doesUserExist(response)) {
+                continue;
+            }
+            const userName = await getUserName(response);
             const breakLine = document.createElement('hr');
             const ratingLine = document.createElement('p');
             ratingLine.id = "reviewP";

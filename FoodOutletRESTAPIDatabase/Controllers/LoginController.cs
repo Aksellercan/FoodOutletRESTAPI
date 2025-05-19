@@ -28,19 +28,19 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegister)
         {
+            byte[] salt = createSalt(256);
+            string saltBase64tring = Convert.ToBase64String(salt);
+
             var user = new User
             {
                 Username = userRegister.Username,
                 Password = userRegister.Password,
-                Role = "User"
+                Role = "User",
+                Salt = saltBase64tring
             };
-            Console.WriteLine($"Before hashing: {user.Password}");
-            user.Password = HashPassword(userRegister.Password); // Hash the password before saving
-            Console.WriteLine($"Hashed password: {user.Password}");
-
+            user.Password = HashPassword(userRegister.Password, salt); // Hash the password before saving
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
-
             return Ok("User registered successfully");
         }
 
@@ -64,10 +64,18 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private string HashPassword(string password)
+        private byte[] getuserSaltDB(User user) 
         {
-            //byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
-            byte[] salt = new byte[16];
+            return Convert.FromBase64String(user.Salt);
+        }
+
+        private byte[] createSalt(int bits) 
+        {
+            return RandomNumberGenerator.GetBytes(bits / 8);
+        }
+
+        private string HashPassword(string password, byte[] salt)
+        {
             string hashedpassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password!,
                 salt: salt,
@@ -77,10 +85,9 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return hashedpassword;
         }
 
-        private bool compareHashPassword(string enteredPassword, string userPassword) 
+        private bool compareHashPassword(string enteredPassword, string userPassword, byte[] salt) 
         {
-            string hashedpassword = HashPassword(enteredPassword);
-            if (string.Equals(userPassword,hashedpassword))
+            if (string.Equals(userPassword, HashPassword(enteredPassword, salt)))
             {
                 return true;
             }
@@ -92,10 +99,10 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         {
             // Get first matching user
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
-
             if (user == null) return NotFound("login error: User not found");
-            // Check by comparing hashes (Not secure at the moment)
-            if (!compareHashPassword(userLogin.Password, user.Password)) return Unauthorized();
+            // Retrieve saved Salt for comparing hashes
+            byte[] salt = getuserSaltDB(user);
+            if (!compareHashPassword(userLogin.Password, user.Password, salt)) return Unauthorized();
 
             var token = GenerateJwtToken(user, config);
             return Ok(new { Token = token });
@@ -117,10 +124,9 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return Ok();
         }
 
-        // This endpoint is for testing purposes only. It returns the current user's name to display on homepage.
-        [HttpGet("testPoint")]
+        [HttpGet("CurrentUser")]
         [Authorize]
-        public IActionResult getUserCurrently()
+        public IActionResult getCurrentUser()
         {
             var claimCurrentUserId = User.FindFirst(ClaimTypes.Name);
             var currentUserId = claimCurrentUserId?.Value;
