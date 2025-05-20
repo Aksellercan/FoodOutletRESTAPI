@@ -23,10 +23,23 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             var currentUserId = claimCurrentUserId?.Value;
             if (currentUserId == null)
-            { 
+            {
                 throw new UnauthorizedAccessException("Unauthenticated or user not found");
             }
             return int.Parse(currentUserId);
+        }
+
+        public bool isAdmin()
+        {
+            var claimCurrentUser = User.FindFirst(ClaimTypes.Role);
+            string role = claimCurrentUser?.Value.ToString();
+            Console.WriteLine("Current role of user is " + role);
+            if (role.Equals("Admin"))
+            {
+                return true;
+            }
+            Console.WriteLine("Admin Role Verified!");
+            return false;
         }
 
         // List all reviews for a specific food outlet
@@ -77,18 +90,41 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         public async Task<IActionResult> GetReviewsfromUser()
         {
             var userReviews = await _db.Reviews.Where(r => r.UserId == getCurrentUserId()).Select(r => new {
-            FoodOutlet = new { 
-                r.FoodOutletId,
-                r.FoodOutlet.Name
-            },
-            r.Id,
-            r.Comment,
-            r.Score,
-            r.CreatedAt
+                FoodOutlet = new {
+                    r.FoodOutletId,
+                    r.FoodOutlet.Name
+                },
+                r.Id,
+                r.Comment,
+                r.Score,
+                r.CreatedAt
             }).ToListAsync();
 
             Console.WriteLine(userReviews.Count);
             return Ok(userReviews);
+        }
+
+        //delete a review
+        [HttpDelete ("delete/review/{reviewId}")]
+        [Authorize]
+        public async Task<IActionResult> deleteReviews([FromRoute] int reviewId) 
+        {
+            bool test = isAdmin();
+            Console.WriteLine(test);
+            int currentUserId = getCurrentUserId();
+            
+
+            var reviewDelete = await _db.Reviews.FindAsync(reviewId);
+
+            if (reviewDelete == null) return NotFound("Review does not exist!");
+            if (reviewDelete.UserId != currentUserId && !isAdmin()) return Unauthorized(); //only current user and admin can delete reviews
+            try {
+                _db.Reviews.Remove(reviewDelete);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            } catch (Exception e) {
+                return BadRequest($"Error deleting review for r.id {reviewId}. Exception: {e.Message}");
+            }
         }
     }
 }
