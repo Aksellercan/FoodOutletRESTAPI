@@ -49,14 +49,30 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         })
     });
 
-    const result = await response.json();
+    const result = await response;
 
     if (response.ok) {
         alert('Registration successful');
-        console.log(result);
+        const response2 = await fetch('/api/login/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: username,
+            password: password
+        })
+    });
+    const innerresult = await response2.json();
+    if (response2.ok) {
+        alert('Login successful');
+        localStorage.setItem('token', innerresult.token);
+        console.log('Token:', innerresult.token);
+    }
     } else {
         alert('Registration failed');
         console.log(result);
+        
     }
 });
 

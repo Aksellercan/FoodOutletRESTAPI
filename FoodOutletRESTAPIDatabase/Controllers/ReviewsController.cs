@@ -109,15 +109,12 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [Authorize]
         public async Task<IActionResult> deleteReviews([FromRoute] int reviewId) 
         {
-            bool test = isAdmin();
-            Console.WriteLine(test);
             int currentUserId = getCurrentUserId();
-            
 
             var reviewDelete = await _db.Reviews.FindAsync(reviewId);
 
             if (reviewDelete == null) return NotFound("Review does not exist!");
-            if (reviewDelete.UserId != currentUserId && !isAdmin()) return Unauthorized(); //only current user and admin can delete reviews
+            if ((reviewDelete.UserId != currentUserId) && !isAdmin()) return Unauthorized(); //only current user and admin can delete reviews
             try {
                 _db.Reviews.Remove(reviewDelete);
                 await _db.SaveChangesAsync();

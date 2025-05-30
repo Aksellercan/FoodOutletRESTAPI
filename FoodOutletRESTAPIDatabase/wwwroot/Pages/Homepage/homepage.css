@@ -62,12 +62,6 @@ aside{
 	color: #ffffff;
 }
 
-.css-validator{
-    color:white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-style: italic;
-}
-
 #reviewP{
     color: white;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -109,17 +103,11 @@ aside{
     align-items: center;
     color: white;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-weight: lighter;
-}
-
-#loggedUserP{
+    font-weight: "bold";
     font-size: large;
-    font-size: larger;
-    font-weight: lighter;
 }
 
-#linkTest{
-    color: white;
+#showCurrUser{
     font-size: larger;
     font-weight: bold;
 }
@@ -141,4 +129,11 @@ aside{
     font-family: 'Courier New', Courier, monospace;
     font-weight: lighter;
     color: white;
+}
+
+#navigationLinks * {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: white;
+    font-size:x-large;
+    font-weight: bold;
 }

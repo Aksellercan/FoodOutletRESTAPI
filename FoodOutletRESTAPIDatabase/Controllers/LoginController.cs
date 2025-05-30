@@ -1,5 +1,6 @@
 ﻿using FoodOutletRESTAPIDatabase.DTOs;
 using FoodOutletRESTAPIDatabase.Models;
+using FoodOutletRESTAPIDatabase.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
     {
         private readonly FoodOutletDb _db;
         private readonly IConfiguration _config;
+        private Password _passwordService = new Password();
 
         public LoginController(FoodOutletDb db, IConfiguration config)
         {
@@ -28,7 +30,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegister)
         {
-            byte[] salt = createSalt(256);
+            byte[] salt = _passwordService.createSalt(256);
             string saltBase64tring = Convert.ToBase64String(salt);
 
             var user = new User
@@ -38,7 +40,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 Role = "User",
                 Salt = saltBase64tring
             };
-            user.Password = HashPassword(userRegister.Password, salt); // Hash the password before saving
+            user.Password = _passwordService.HashPassword(userRegister.Password, salt); // Hash the password before saving
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
             return Ok("User registered successfully");
@@ -69,25 +71,9 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return Convert.FromBase64String(user.Salt);
         }
 
-        private byte[] createSalt(int bits) 
-        {
-            return RandomNumberGenerator.GetBytes(bits / 8);
-        }
-
-        private string HashPassword(string password, byte[] salt)
-        {
-            string hashedpassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password!,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
-            return hashedpassword;
-        }
-
         private bool compareHashPassword(string enteredPassword, string userPassword, byte[] salt) 
         {
-            if (string.Equals(userPassword, HashPassword(enteredPassword, salt)))
+            if (string.Equals(userPassword, _passwordService.HashPassword(enteredPassword, salt)))
             {
                 return true;
             }
@@ -108,7 +94,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return Ok(new { Token = token });
         }
 
-        [HttpGet("{userId}")]
+        [HttpGet("{userId}")] //to be deprecated
         public async Task<IActionResult> getUser([FromRoute] int userId) 
         {
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
@@ -117,7 +103,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         }
 
         [HttpGet("admin")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")] //to be deprecated
         public IActionResult VerifyAdmin()
         {
             Console.WriteLine("Admin Role Verified!");
@@ -128,13 +114,37 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [Authorize]
         public IActionResult getCurrentUser()
         {
-            var claimCurrentUserId = User.FindFirst(ClaimTypes.Name);
-            var currentUserId = claimCurrentUserId?.Value;
-            if (currentUserId == null)
+            var claimCurrentUsername = User.FindFirst(ClaimTypes.Name);
+            var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            var currentUsername = claimCurrentUsername?.Value;
+            var currentUserIdstr = claimCurrentUserId?.Value;
+
+            if (currentUserIdstr == null || currentUsername == null)
             {
                 return BadRequest("Unauthenticated or user not found");
             }
-            return Ok(currentUserId);
+
+            int currentUserId = int.Parse(claimCurrentUserId?.Value);
+            var currentUserDTO = new UserDTO
+            {
+                Id = currentUserId,
+                Username = currentUsername
+            };
+            return Ok(currentUserDTO);
+        }
+
+        [Authorize]
+        [HttpGet ("refreshToken")]
+        public async Task<IActionResult> refreshAccessToken(IConfiguration config) 
+        {
+            var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (claimCurrentUserId == null) { return Unauthorized("No user ID claim found."); }
+            int parsedClaimId = int.Parse(claimCurrentUserId?.Value);
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == parsedClaimId);
+            if (user == null) return Unauthorized("User not found.");
+            var token = GenerateJwtToken(user, config);
+            return Ok(new { Token = token });
         }
     }
 }

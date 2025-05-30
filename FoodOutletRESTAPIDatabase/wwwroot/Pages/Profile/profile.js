@@ -7,9 +7,12 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
     //show logged in user
     const currUser = await getUserName();
     if (isLoggedin) {
+        const settingsPage = document.getElementById('headerSettings');
+        settingsPage.textContent = 'Settings'
+        settingsPage.href = '/Pages/UserSettings/userSettings.html';
         document.getElementById('headerLogin').textContent = 'Log out';
-        document.getElementById('loggedUserP').textContent = `${currUser}`;
-        document.getElementById('profileMainHeader').textContent = `${currUser}'s Reviews:`;
+        document.getElementById('loggedUserP').textContent = `${currUser.username}`;
+        document.getElementById('profileMainHeader').textContent = `${currUser.username}'s Reviews:`;
         loop();
     } else {
         document.getElementById('headerLogin').textContent = 'Login';
@@ -26,11 +29,12 @@ async function getUserName() {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
         }
     });
-    const currUser = await testResponse.text();
-    console.log("currUser raw text:" + currUser);
+    const currUser = await testResponse.json();
     console.log(`Response Status Code: ${testResponse.status}`);
     if (testResponse.status === 200) {
         isLoggedin = true;
+        CurrentUserName = currUser.username;
+        console.log(`currUser raw text: name ${CurrentUserName}`);
         return currUser;
     }
     return;
@@ -87,6 +91,7 @@ async function loop(){
 }
 
 function clearStorage() {
+    if (!isLoggedin) {window.location.href = './index.html';}
     if (localStorage.getItem('token') == null){return;}
     localStorage.removeItem('token');
     alert("cleared token");

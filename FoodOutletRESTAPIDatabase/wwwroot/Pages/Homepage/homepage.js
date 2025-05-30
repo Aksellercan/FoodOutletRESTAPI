@@ -1,5 +1,6 @@
 let id;
-const mainContent = document.getElementById('content');;
+const mainContent = document.getElementById('content');
+var isLoggedin = false;
 
 document.addEventListener("DOMContentLoaded", async function (event) { //runs on page load
     event.preventDefault();
@@ -13,9 +14,17 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
             "Authorization": `Bearer ${localStorage.getItem('token')}`
         }
     });
-    const currUser = await testResponse.text();
-    console.log("currUser raw text:", currUser);
-    document.getElementById('loggedUserP').textContent = `Current User: ${currUser}`;
+    const currUser = await testResponse.json();
+    if (testResponse.status === 200) {
+        isLoggedin = true;
+    }
+    console.log("currUser raw text:", currUser.username);
+    if (isLoggedin) {
+        document.getElementById('loginLink').textContent = 'Log out';
+        document.getElementById('showCurrUser').textContent = `${currUser.username}`;
+    } else {
+        document.getElementById('loginLink').textContent = 'Login';
+    }
 
     //continue
     if (outletList.length > 0) {
@@ -198,6 +207,7 @@ function reviewFormLayout(outletid){
 
 //logout (for testing)
 function clearStorage() {
+    if (!isLoggedin) {window.location.href = './index.html';}
     if (localStorage.getItem('token') == null){return;}
     localStorage.removeItem('token');
     alert("cleared token");
