@@ -74,16 +74,18 @@ async function loop(){
     for (let i = 0; i < reviewsArray.length; i++) {
         const commentView = document.createElement('p');
         commentView.className = "commentList";
-        commentView.textContent = `> ${reviewsArray[i].comment}`;
+        commentView.textContent = `Comment: ${reviewsArray[i].comment}`;
         const scoreView = document.createElement('p');
         scoreView.className = "commentList";
         scoreView.textContent = `Score given: ${reviewsArray[i].score}`;
-        const breakLine = document.createElement('hr');
+        const breakLine = document.createElement('br');
         count++;
         listContent.appendChild(scoreView);
         listContent.appendChild(commentView);
         listContent.appendChild(breakLine);
     }
+    const hrLine = document.createElement('hr');
+    listContent.appendChild(hrLine);
     const countReviews = document.createElement('p');
     countReviews.className = "commentList";
     countReviews.innerHTML = `${count} ${(count === 1) ?  ` Review` :  ` Reviews`}`;

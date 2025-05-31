@@ -112,7 +112,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         [HttpGet("CurrentUser")]
         [Authorize]
-        public IActionResult getCurrentUser()
+        public async Task<IActionResult> getCurrentUser()
         {
             var claimCurrentUsername = User.FindFirst(ClaimTypes.Name);
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -125,7 +125,14 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 return BadRequest("Unauthenticated or user not found");
             }
 
+
             int currentUserId = int.Parse(claimCurrentUserId?.Value);
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
+            if (user == null)
+            {
+                return BadRequest("Unauthenticated or user not found");
+            }
+
             var currentUserDTO = new UserDTO
             {
                 Id = currentUserId,

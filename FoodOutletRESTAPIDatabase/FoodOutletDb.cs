@@ -22,7 +22,6 @@ namespace FoodOutletRESTAPIDatabase
                 entity.HasKey(f => f.Id); // Primary key
                 entity.Property(f => f.Name).IsRequired().HasMaxLength(255);
                 entity.Property(f => f.Location).IsRequired().HasMaxLength(255);
-                //entity.Property(f => f.Rating).IsRequired();
 
                 // Define one-to-many relationship with Review
                 entity.HasMany(f => f.Reviews)
@@ -43,12 +42,18 @@ namespace FoodOutletRESTAPIDatabase
                       .HasDefaultValueSql("CURRENT_TIMESTAMP"); // Default value for timestamps
             });
 
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Reviews)
-                .WithOne(r => r.User)
-                .HasForeignKey(r => r.UserId)
-                .IsRequired()
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(u => u.Id); // Primary key
+                entity.Property(u => u.Username).IsRequired().HasMaxLength(255);
+                entity.Property(u => u.Password).IsRequired().HasMaxLength(255);
+                // Define one-to-many relationship with Review
+                entity.HasMany(u => u.Reviews)
+                      .WithOne(r => r.User)
+                      .IsRequired()
+                      .HasForeignKey(r => r.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }
