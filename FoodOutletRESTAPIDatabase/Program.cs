@@ -64,7 +64,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 {
                     context.Response.StatusCode = 403;
                     context.Response.ContentType = "application/json";
-                    var result = JsonConvert.SerializeObject(new { error = "You  don't have access to this content" });
+                    var result = JsonConvert.SerializeObject(new { error = "You don't have access to this content" });
                     Console.WriteLine("You lack the privileges to access this content");
                     return context.Response.WriteAsync(result);
                 }
@@ -72,6 +72,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
+
+
+//builder.Services.Configure<CookiePolicyOptions>(options => 
+//{
+//    options.CheckConsentNeeded = context => true;
+//    options.MinimumSameSitePolicy = SameSiteMode.None;
+//});
+
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    // Cookie settings
+//    options.Cookie.HttpOnly = true;
+//    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+
+//});
+
 
 // Cors testing
 builder.Services.AddCors(options =>
@@ -97,4 +113,5 @@ app.MapControllers();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+//app.UseCookiePolicy();
 app.Run();

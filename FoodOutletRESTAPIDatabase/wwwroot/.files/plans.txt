@@ -1,0 +1,21 @@
+New stuff to add to API
+
+1. Optimizing User related Info:
+
+- Make a JS class or file to keep user info of currently logged in user. Info includes Id, username and mail (when added).
+- This file will run once get current user by querying database through API.
+- On log out this "object" will get removed or cleared out.
+
+Benefits of this is less API and Database calls thus making it faster
+
+2. Optimizing readability
+
+- Organize JS functions into separate files and import them into one main file to be used.
+- Same for CSS files as well
+- Rewrite Index.js and Homepage.js
+- Organize it according to OOP and SOLID principles
+- Try to make functions that can be reused.
+
+Refactoring and making the program more extendible
+
+Non important stuff: Add needed pages accordingly

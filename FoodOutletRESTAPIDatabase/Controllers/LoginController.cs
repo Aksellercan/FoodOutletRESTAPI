@@ -35,6 +35,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
             var user = new User
             {
+                //Mail = userRegister.Mail,
                 Username = userRegister.Username,
                 Password = userRegister.Password,
                 Role = "User",
@@ -57,6 +58,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 claims: new List<Claim>
                 {
                 new Claim(ClaimTypes.Name, user.Username),
+                //new Claim(ClaimTypes.Email, user.Mail),
                 new Claim(ClaimTypes.Role, user.Role),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 },
@@ -116,11 +118,13 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         {
             var claimCurrentUsername = User.FindFirst(ClaimTypes.Name);
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
+            var claimCurrentUserRole = User.FindFirst(ClaimTypes.Role);
 
             var currentUsername = claimCurrentUsername?.Value;
             var currentUserIdstr = claimCurrentUserId?.Value;
+            var currentUserRole = claimCurrentUserRole?.Value;
 
-            if (currentUserIdstr == null || currentUsername == null)
+            if (currentUserIdstr == null || currentUsername == null || currentUserRole == null)
             {
                 return BadRequest("Unauthenticated or user not found");
             }
@@ -136,7 +140,8 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var currentUserDTO = new UserDTO
             {
                 Id = currentUserId,
-                Username = currentUsername
+                Username = currentUsername,
+                Role = currentUserRole
             };
             return Ok(currentUserDTO);
         }

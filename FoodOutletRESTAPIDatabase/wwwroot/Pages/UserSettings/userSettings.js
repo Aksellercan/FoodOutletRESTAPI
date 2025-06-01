@@ -4,7 +4,6 @@ var isLoggedin = false;
 
 document.addEventListener("DOMContentLoaded", async function (event) { //runs on page load
     event.preventDefault();
-
     //show logged in user
     const currUser = await getUserName();
     if (isLoggedin) {
@@ -115,7 +114,9 @@ async function updatePassword(newPassword) {
     if (updatePassword.status === 200) {
         localStorage.removeItem('token');
         alert("Login with new password");
-        window.location.href = "https://localhost:7277/index.html"; //send to the frontpage (placeholder)
+        window.location.href = "/index.html"; //send to the frontpage (placeholder)
+    } else {
+        alert("Password is same as old one.");
     }
 }
 
