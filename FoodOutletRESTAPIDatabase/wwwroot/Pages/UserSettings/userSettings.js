@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
         document.getElementById('updateUsernameLabelBtn').textContent = `Enter New Username (Current Username: ${currUser.username})`;
     } else {
         document.getElementById('headerLogin').textContent = 'Login';
+        document.getElementById('headerLogin').href = '/index.html';
         document.getElementById('loggedUserP').textContent = "Not logged in!";
     }
 });
@@ -20,9 +21,8 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
 async function getUserName() {
     const testResponse = await fetch('/api/login/CurrentUser', {
         method: "GET",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
-        }
+        credentials: "include",
+        path: "/jwtTokenTest"
     });
     const currUser = await testResponse.json();
     console.log(`Response Status Code: ${testResponse.status}`);
@@ -45,14 +45,31 @@ function clearStorage() {
     location.reload();
 }
 
+async function LogOut() {
+    if (isLoggedin) {
+        const logoutRequest = await fetch('/api/login/logout', { 
+            method: "POST",
+            credentials: "include",
+            path:"/jwtTokenTest"
+        });
+        const bodyResponse = await logoutRequest.text();
+        console.log(`Status code: ${logoutRequest.status} and body: ${bodyResponse}`)
+        window.location.href = "https://localhost:7277/index.html";
+    }
+    window.location.href = "https://localhost:7277/index.html";
+}
+
 async function removeUser() {
     const deleteRequest = await fetch(`/api/user/remove/${CurrentUserId}`, {
         method: "DELETE",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
-        }
+        credentials: "include",
+        path:"/jwtTokenTest"
     });
-    localStorage.removeItem('token');
+    const logoutRequest = await fetch('/api/login/logout', { 
+            method: "POST",
+            credentials: "include",
+            path:"/jwtTokenTest"
+        });
     alert("Account Removed!");
     window.location.href = "https://localhost:7277/index.html"; //send to the frontpage (placeholder)
 }
@@ -69,29 +86,27 @@ document.getElementById('deleteAccountForm').addEventListener('submit', async fu
 async function updateUsername(newUsername) {
     const updateUsername = await fetch(`/api/user/namech/${CurrentUserId}?newUsername=${newUsername}`,{
         method: "PUT",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`,
-        }
+        credentials: "include",
+        path:"/jwtTokenTest"
     });
 
     if (updateUsername.status === 200) {
         await refreshToken();
-        console.log("username updated successfully");
         location.reload();
+        console.log("username updated successfully");
     }
 }
 
 async function refreshToken() {
     const getRefreshToken = await fetch('/api/login/refreshToken', {
-        method: "GET",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
-        }
+        method: "POST",
+        credentials: "include",
+        path:"/jwtTokenTest"
     });
-    const refreshResponse = await getRefreshToken.json();
+
+    const refreshResponse = await getRefreshToken.text();
     if (getRefreshToken.status === 200) {
-        localStorage.removeItem('token');
-        localStorage.setItem('token', refreshResponse.token);
+        console.log(`Status code: ${getRefreshToken.status} and body: ${refreshResponse}`)
         return;
     }
     console.log('Error refreshing token');
@@ -106,17 +121,17 @@ document.getElementById('newUsernameForm').addEventListener('submit', async func
 async function updatePassword(newPassword) {
     const updatePassword = await fetch(`/api/user/passch/${CurrentUserId}?newPassword=${newPassword}`,{
         method: "PUT",
-        headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`,
-        }
+        credentials: "include",
+        path:"/jwtTokenTest"
     });
 
     if (updatePassword.status === 200) {
-        localStorage.removeItem('token');
-        alert("Login with new password");
-        window.location.href = "/index.html"; //send to the frontpage (placeholder)
-    } else {
+        refreshToken();
+        alert("Password Updated");
+    } else if (updatePassword.status === 400) {
         alert("Password is same as old one.");
+    } else {
+        alert("Unknown Error");
     }
 }
 

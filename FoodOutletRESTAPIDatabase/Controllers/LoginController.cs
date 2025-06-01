@@ -93,7 +93,18 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             if (!compareHashPassword(userLogin.Password, user.Password, salt)) return Unauthorized();
 
             var token = GenerateJwtToken(user, config);
-            return Ok(new { Token = token });
+
+            Response.Cookies.Append("jwtTokenTest", token, new CookieOptions
+            {
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = false,
+                SameSite = SameSiteMode.Strict,
+                Domain = "localhost",
+                Expires = DateTime.UtcNow.AddDays(1)
+            });
+            return Ok("Logged in Successfully");
+            //return Ok(new { Token = token });
         }
 
         [HttpGet("{userId}")] //to be deprecated
@@ -147,8 +158,8 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         }
 
         [Authorize]
-        [HttpGet ("refreshToken")]
-        public async Task<IActionResult> refreshAccessToken(IConfiguration config) 
+        [HttpPost ("refreshToken")]
+        public async Task<IActionResult> RefreshAccessToken(IConfiguration config) 
         {
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             if (claimCurrentUserId == null) { return Unauthorized("No user ID claim found."); }
@@ -156,7 +167,31 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == parsedClaimId);
             if (user == null) return Unauthorized("User not found.");
             var token = GenerateJwtToken(user, config);
-            return Ok(new { Token = token });
+            Response.Cookies.Append("jwtTokenTest", token, new CookieOptions
+            {
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = false,
+                SameSite = SameSiteMode.Strict,
+                Domain = "localhost",
+                Expires = DateTime.UtcNow.AddDays(1)
+            });
+            return Ok("Token Refreshed");
+            //return Ok(new { Token = token });
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult ClearCookiesLogOut() 
+        {
+            Response.Cookies.Delete("jwtTokenTest", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            });
+            return Ok("Logged out and cleared Cookies");
         }
     }
 }

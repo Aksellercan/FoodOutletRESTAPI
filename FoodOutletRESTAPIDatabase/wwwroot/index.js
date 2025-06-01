@@ -21,11 +21,11 @@ document.getElementById('loginForm').addEventListener('submit', async function (
             password: password
         })
     });
-    const result = await response.json();
+    //const result = await response.json();
     if (response.ok) {
         alert('Login successful');
-        localStorage.setItem('token', result.token);
-        console.log('Token:', result.token);
+        //localStorage.setItem('token', result.token);
+        //console.log('Token:', result.token);
     } else {
         alert('Login failed');
         console.log(result);

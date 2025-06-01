@@ -46,6 +46,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 Console.WriteLine("Token Validated");
                 return Task.CompletedTask;
             },
+            OnMessageReceived = context => 
+            {
+                var token = context.Request.Cookies["jwtTokenTest"];
+                if (!string.IsNullOrEmpty(token)) {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            },
             OnChallenge = context => 
             {
                 context.HandleResponse();
@@ -74,19 +82,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
-//builder.Services.Configure<CookiePolicyOptions>(options => 
-//{
-//    options.CheckConsentNeeded = context => true;
-//    options.MinimumSameSitePolicy = SameSiteMode.None;
-//});
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => true;
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    // Cookie settings
-//    options.Cookie.HttpOnly = true;
-//    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Cookie settings
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
 
-//});
+});
 
 
 // Cors testing
@@ -113,5 +121,5 @@ app.MapControllers();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-//app.UseCookiePolicy();
+app.UseCookiePolicy();
 app.Run();

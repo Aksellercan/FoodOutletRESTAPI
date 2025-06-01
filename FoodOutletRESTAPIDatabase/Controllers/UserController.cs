@@ -99,13 +99,11 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             {
                 byte[] compareSalt = Convert.FromBase64String(updateUserpassword.Salt);
                 string compareHashes = _passwordService.HashPassword(newPassword, compareSalt);
-                Console.WriteLine($"new passhash: {compareHashes} and old hash: {updateUserpassword.Password}");
                 if (string.Equals(updateUserpassword.Password, compareHashes))
                 {
-                    Console.WriteLine("Password is same");
-                    return BadRequest("New Password is same as old one.");
+                    Console.WriteLine("New Password is same as old one or malformed.");
+                    return BadRequest("New Password is same as old one or malformed.");
                 }
-                Console.WriteLine("wrong if same");
                 byte[] newSalt = _passwordService.createSalt(256);
                 string saltBase64tring = Convert.ToBase64String(newSalt);
                 string newHashedPassword = _passwordService.HashPassword(newPassword, newSalt);
