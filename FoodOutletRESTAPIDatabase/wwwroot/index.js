@@ -1,3 +1,5 @@
+import Auth from './Services/Auth.js';
+
 function clearStorage() {
     localStorage.removeItem('token');
     alert("cleared token");
@@ -24,6 +26,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     //const result = await response.json();
     if (response.ok) {
         alert('Login successful');
+        Auth.getUserName(false);
         //localStorage.setItem('token', result.token);
         //console.log('Token:', result.token);
     } else {

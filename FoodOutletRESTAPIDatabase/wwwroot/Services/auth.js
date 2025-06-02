@@ -1,13 +1,13 @@
 import UserDetails from './UserDetails.js';
 
 const CurrentUser = new UserDetails();
-const isLoggedin = false;
+var isLoggedin = false;
 
-async function getUserName() {
+async function getUserName(reload) {
     const testResponse = await fetch('/api/login/CurrentUser', {
         method: "GET",
         credentials: "include",
-        path: "/jwtTokenTest"
+        path: "/Identity"
     });
     const currUser = await testResponse.json();
     console.log(`Response Status Code: ${testResponse.status}`);
@@ -16,8 +16,11 @@ async function getUserName() {
         CurrentUser.setLoggedinStatus(isLoggedin);
         CurrentUser.setUserDetails(currUser.id, currUser.username);
         
-        console.log(`currUser raw text: id ${CurrentUser.getCurrentUsername()} and ${CurrentUser.getCurrentUserId}`);
+        console.log(`currUser raw text: Name ${CurrentUser.getCurrentUsername()} and id ${CurrentUser.getCurrentUserId()}`);
         saveSession(CurrentUser);
+        if (reload) {
+            location.reload();
+        }
         return CurrentUser;
     }
     return;
@@ -28,3 +31,8 @@ function saveSession(sessionUserData) {
     sessionStorage.setItem("username", sessionUserData.getCurrentUsername());
     sessionStorage.setItem("status", sessionUserData.getisLoggedin());
 }
+
+export default {
+    getUserName,
+    saveSession
+};
