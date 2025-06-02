@@ -1,4 +1,5 @@
-﻿using FoodOutletRESTAPIDatabase.Services;
+﻿using FoodOutletRESTAPIDatabase.Services.Logger;
+using FoodOutletRESTAPIDatabase.Services.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             {
                 _db.Users.Remove(removeUser);
                 await _db.SaveChangesAsync();
-                Console.WriteLine($"User with id {removeUser.Id} is successfully removed");
+                Logger.Log(Severity.DEBUG, $"User with id {removeUser.Id} is successfully removed");
             } catch (Exception e) {
                 return BadRequest($"Failed to remove user with id {currUser}. {e.Message}");
             }
@@ -64,7 +65,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             {
                 updateUsername.Username = newUsername;
                 await _db.SaveChangesAsync();
-                Console.WriteLine($"Username updated to {updateUsername.Username}");
+                Logger.Log(Severity.DEBUG, $"Username updated to {updateUsername.Username}");
             }
             catch (Exception e) {
                 return BadRequest($"Failed to update username for user with id {currUser}. {e.Message}");
@@ -101,7 +102,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 string compareHashes = _passwordService.HashPassword(newPassword, compareSalt);
                 if (string.Equals(updateUserpassword.Password, compareHashes))
                 {
-                    Console.WriteLine("New Password is same as old one or malformed.");
+                    Logger.Log(Severity.WARN, "New Password is same as old one or malformed.");
                     return BadRequest("New Password is same as old one or malformed.");
                 }
                 byte[] newSalt = _passwordService.createSalt(256);

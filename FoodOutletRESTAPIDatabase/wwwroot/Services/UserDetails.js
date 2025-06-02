@@ -1,4 +1,4 @@
-class UserDetails {
+export default class UserDetails {
     constructor() {
         this.isLoggedin = false;
         this.CurrentUserId = null;
@@ -30,5 +30,3 @@ class UserDetails {
         return this.CurrentUserId;
     }
 }
-
-module.exports = UserDetails;

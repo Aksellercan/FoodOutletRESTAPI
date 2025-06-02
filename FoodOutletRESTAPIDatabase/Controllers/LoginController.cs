@@ -1,14 +1,12 @@
 ﻿using FoodOutletRESTAPIDatabase.DTOs;
 using FoodOutletRESTAPIDatabase.Models;
-using FoodOutletRESTAPIDatabase.Services;
+using FoodOutletRESTAPIDatabase.Services.Security;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace FoodOutletRESTAPIDatabase.Controllers
@@ -94,7 +92,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
             var token = GenerateJwtToken(user, config);
 
-            Response.Cookies.Append("jwtTokenTest", token, new CookieOptions
+            Response.Cookies.Append("Identity", token, new CookieOptions
             {
                 HttpOnly = true,
                 IsEssential = true,
@@ -104,23 +102,6 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 Expires = DateTime.UtcNow.AddDays(1)
             });
             return Ok("Logged in Successfully");
-            //return Ok(new { Token = token });
-        }
-
-        [HttpGet("{userId}")] //to be deprecated
-        public async Task<IActionResult> getUser([FromRoute] int userId) 
-        {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null) return NotFound("User not found");
-            return Ok(user.Username);
-        }
-
-        [HttpGet("admin")]
-        [Authorize(Roles = "Admin")] //to be deprecated
-        public IActionResult VerifyAdmin()
-        {
-            Console.WriteLine("Admin Role Verified!");
-            return Ok();
         }
 
         [HttpGet("CurrentUser")]
@@ -167,7 +148,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == parsedClaimId);
             if (user == null) return Unauthorized("User not found.");
             var token = GenerateJwtToken(user, config);
-            Response.Cookies.Append("jwtTokenTest", token, new CookieOptions
+            Response.Cookies.Append("Identity", token, new CookieOptions
             {
                 HttpOnly = true,
                 IsEssential = true,
@@ -177,14 +158,13 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 Expires = DateTime.UtcNow.AddDays(1)
             });
             return Ok("Token Refreshed");
-            //return Ok(new { Token = token });
         }
 
         [Authorize]
         [HttpPost("logout")]
         public IActionResult ClearCookiesLogOut() 
         {
-            Response.Cookies.Delete("jwtTokenTest", new CookieOptions
+            Response.Cookies.Delete("Identity", new CookieOptions
             {
                 HttpOnly = true,
                 Secure = false,

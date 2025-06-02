@@ -4,12 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
+using FoodOutletRESTAPIDatabase.Services.Logger;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+Logger.setDebugOutput(false); //whether to print debug lines to console or not
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FoodOutletDb>(opt => opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -36,19 +39,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     context.Response.StatusCode = 401;
                     context.Response.ContentType = "application/json";
                     var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
-                    Console.WriteLine("Authentication failed: " + context.Exception.Message);
+                    Logger.Log(Severity.ERROR, "Authentication failed: " + context.Exception.Message);
                     return context.Response.WriteAsync(result);
                 }
                 return Task.CompletedTask;
             },
             OnTokenValidated = context =>
             {
-                Console.WriteLine("Token Validated");
+                Logger.Log(Severity.INFO, "Token Validated");
                 return Task.CompletedTask;
             },
             OnMessageReceived = context => 
             {
-                var token = context.Request.Cookies["jwtTokenTest"];
+                var token = context.Request.Cookies["Identity"];
                 if (!string.IsNullOrEmpty(token)) {
                     context.Token = token;
                 }
@@ -73,7 +76,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     context.Response.StatusCode = 403;
                     context.Response.ContentType = "application/json";
                     var result = JsonConvert.SerializeObject(new { error = "You don't have access to this content" });
-                    Console.WriteLine("You lack the privileges to access this content");
+                    Logger.Log(Severity.ERROR, "You lack the privileges to access this content");
                     return context.Response.WriteAsync(result);
                 }
                 return Task.CompletedTask;

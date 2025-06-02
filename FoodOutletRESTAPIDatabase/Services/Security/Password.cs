@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Security.Cryptography;
 
-namespace FoodOutletRESTAPIDatabase.Services
+namespace FoodOutletRESTAPIDatabase.Services.Security
 {
     public class Password : IPasswordHasher
     {
@@ -13,15 +13,12 @@ namespace FoodOutletRESTAPIDatabase.Services
                 prf: KeyDerivationPrf.HMACSHA256,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
-
-            Console.WriteLine($"current hash password {hashedpassword}");
             return hashedpassword;
         }
 
         public byte[] createSalt(int bits) 
         {
             byte[] test = RandomNumberGenerator.GetBytes(bits / 8);
-            Console.WriteLine($"current salt = {test}");
             return test;
         }
     }

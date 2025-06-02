@@ -1,5 +1,6 @@
-const CurrentUser = require('./UserDetails.js');
-CurrentUser = new UserDetails();
+import UserDetails from './UserDetails.js';
+
+const CurrentUser = new UserDetails();
 const isLoggedin = false;
 
 async function getUserName() {
@@ -16,7 +17,14 @@ async function getUserName() {
         CurrentUser.setUserDetails(currUser.id, currUser.username);
         
         console.log(`currUser raw text: id ${CurrentUser.getCurrentUsername()} and ${CurrentUser.getCurrentUserId}`);
-        return currUser;
+        saveSession(CurrentUser);
+        return CurrentUser;
     }
     return;
+}
+
+function saveSession(sessionUserData) {
+    sessionStorage.setItem("id", sessionUserData.getCurrentUserId());
+    sessionStorage.setItem("username", sessionUserData.getCurrentUsername());
+    sessionStorage.setItem("status", sessionUserData.getisLoggedin());
 }

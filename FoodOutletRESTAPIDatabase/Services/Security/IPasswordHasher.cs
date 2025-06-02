@@ -1,4 +1,4 @@
-﻿namespace FoodOutletRESTAPIDatabase.Services
+﻿namespace FoodOutletRESTAPIDatabase.Services.Security
 {
     public interface IPasswordHasher
     {

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using FoodOutletRESTAPIDatabase.DTOs;
 using System.Security.Claims;
+using FoodOutletRESTAPIDatabase.Services.Logger;
 
 namespace FoodOutletRESTAPIDatabase.Controllers
 {
@@ -33,12 +34,12 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         {
             var claimCurrentUser = User.FindFirst(ClaimTypes.Role);
             string role = claimCurrentUser?.Value.ToString();
-            Console.WriteLine("Current role of user is " + role);
+            Logger.Log(Severity.INFO, "Current role of user is " + role);
             if (role.Equals("Admin"))
             {
                 return true;
             }
-            Console.WriteLine("Admin Role Verified!");
+            Logger.Log(Severity.INFO, "Admin Role Verified!");
             return false;
         }
 
@@ -100,7 +101,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 r.CreatedAt
             }).ToListAsync();
 
-            Console.WriteLine(userReviews.Count);
+            Logger.Log(Severity.INFO, "User Review count: " + userReviews.Count);
             return Ok(userReviews);
         }
 
