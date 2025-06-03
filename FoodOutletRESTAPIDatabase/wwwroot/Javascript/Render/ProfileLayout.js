@@ -1,6 +1,6 @@
-import ApiRequest from "../Services/ApiRequest";
+import ApiRequest from "/Javascript/Services/ApiRequest.js";
 
-async function loop(){
+async function loop(isLoggedin){
     const listContent = document.getElementById('profileMainContent');
     const breakLine = document.createElement('br');
     listContent.innerHTML = '';
@@ -39,4 +39,8 @@ async function loop(){
     countReviews.className = "commentList";
     countReviews.innerHTML = `${count} ${(count === 1) ?  ` Review` :  ` Reviews`}`;
     listContent.appendChild(countReviews);
+}
+
+export default {
+    loop
 }

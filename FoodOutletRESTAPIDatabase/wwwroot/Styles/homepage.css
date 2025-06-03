@@ -136,4 +136,9 @@ aside{
     color: white;
     font-size:x-large;
     font-weight: bold;
+    text-decoration: none;
+}
+
+#loginLink {
+    cursor: pointer;
 }

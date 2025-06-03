@@ -30,6 +30,14 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return int.Parse(currentUserId);
         }
 
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> getUser([FromRoute] int userId)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound("User not found");
+            return Ok(user.Username);
+        }
+
         [Authorize]
         [HttpDelete("remove/{currUser}")]
         public async Task<IActionResult> removeUser([FromRoute] int currUser)

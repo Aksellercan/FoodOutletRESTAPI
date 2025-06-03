@@ -10,6 +10,53 @@ async function getReviews() {
     return reviews;
 }
 
+//Fetch reviews
+async function getOutletReviews(outletId) {
+    const response = await fetch(`/api/reviews/${outletId}`);
+    const reviews = await response.json();
+    return reviews;
+}
+
+//Fetch outlet list
+async function getOutletList() {
+    const response = await fetch('/api/foodoutlet');
+    const list = await response.json();
+    return list;
+}
+
+//Post Review
+async function postReviewBody(comment, score, outletId, mainContent) {
+    try {
+        if (score < 1 || score > 5) {
+            throw new Error(`Score must be between 1 and 5`);
+        }
+        const response = await fetch(`/api/reviews/${outletId}/reviews`, {
+            method: 'POST',
+            credentials:"include",
+            path:path,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                comment: comment,
+                score: score
+            })
+        });
+        const result = await response.json();
+        const error = await result.error;
+        if (response.ok) {
+            alert('Submission successful ');
+            mainContent.innerHTML = "";
+            await loadReviews(outletId);
+        } else {
+            throw new Error(`Submission failed. ${error}`);
+        }
+    } catch (e) {
+        alert(e);
+        console.log(e);
+    }
+}
+
 async function removeUser(CurrentUserId) {
     const deleteRequest = await fetch(`/api/user/remove/${CurrentUserId}`, {
         method: "DELETE",
@@ -49,7 +96,6 @@ async function refreshToken() {
         credentials: "include",
         path:path
     });
-
     const refreshResponse = await getRefreshToken.text();
     if (getRefreshToken.status === 200) {
         console.log(`Status code: ${getRefreshToken.status} and body: ${refreshResponse}`)
@@ -58,8 +104,13 @@ async function refreshToken() {
     console.log(`Error refreshing token. Status code: ${getRefreshToken.status} and body: ${refreshResponse}`);
 }
 
+
+
 export default {
     getReviews,
     removeUser,
-    updatePassword
+    getOutletReviews,
+    postReviewBody,
+    updatePassword,
+    getOutletList
 };

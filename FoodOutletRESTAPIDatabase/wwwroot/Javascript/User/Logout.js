@@ -1,8 +1,6 @@
 async function LogOut() {
     console.log ("Logout");
-    const parsedObject = JSON.parse(localStorage.getItem("object"));
-    var isLoggedin = parsedObject.isLoggedin;
-    if (isLoggedin) {
+    try {
         const logoutRequest = await fetch('/api/login/logout', { 
             method: "POST",
             credentials: "include",
@@ -12,9 +10,13 @@ async function LogOut() {
         console.log(`Status code: ${logoutRequest.status} and body: ${bodyResponse}`)
         sessionStorage.clear();
         localStorage.clear();
+        window.location.href = "/Pages/Login/Login.html";
+    } catch(err) {
+        console.log("Log out error! " + err);
+        window.location.href = "/Pages/Login/Login.html";
     }
-    window.location.href = "https://localhost:7277/index.html";
 }
+
 
 window.LogOut = LogOut;
 export default {

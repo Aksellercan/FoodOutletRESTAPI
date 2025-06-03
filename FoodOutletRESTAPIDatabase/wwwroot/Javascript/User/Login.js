@@ -16,15 +16,17 @@ async function requestLogin(username, password){
     if (response.ok) {
         sessionStorage.clear();
         alert('Login successful');
-        Auth.getUserName(false);
+        await Auth.getUserName(false);
+        return true;
     } else {
         alert('Login failed');
+        return false;
     }
 }
 
 async function Login(username,password){
-    await requestLogin(username, password);
-    if (localStorage.getItem("object") === null) {
+    const response = await requestLogin(username, password);
+    if (!response) {
         console.log("Login error");
         return;
     }

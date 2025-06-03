@@ -1,22 +1,24 @@
 import outletLayout from '/Javascript/Render/OutletListLayout.js';
 import reviewsLayout from '/Javascript/Render/ReviewsLayout.js';
+import ApiRequest from '/Javascript/Services/ApiRequest.js';
+import Header from '/Javascript/Functions/Header.js';
+import Logout from '/Javascript/User/Logout.js';
+
 
 let id;
 const mainContent = document.getElementById('content');
-var isLoggedin = false;
-reviewsLayout.setMainContent(mainContent);
+var CurrentUserName;
+var CurrentUserId;
 
 document.addEventListener("DOMContentLoaded", async function (event) { //runs on page load
     event.preventDefault();
-    isLoggedin = sessionStorage.getItem("status");
-    const outletList = await getOutletList();
+    reviewsLayout.setMainContent(mainContent);
+    const outletList = await ApiRequest.getOutletList();
     const resultDiv = document.getElementById('outletShowList');
-    if (isLoggedin) {
-        document.getElementById('loginLink').textContent = 'Log out';
-        document.getElementById('showCurrUser').textContent = `${sessionStorage.getItem("username")}`;
-    } else {
-        document.getElementById('loginLink').textContent = 'Login';
-    }
+    Header.basicHeader();
+    if (Header.getisLoggedin() === false) return;
+    CurrentUserName = Header.getCurrentUsername();
+    CurrentUserId = Header.getCurrentUserId();
 
     //continue
     if (outletList.length > 0) {
@@ -39,56 +41,12 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
     }
 });
 
+window.Logout = Logout.LogOut;
+
 async function loadReviews(outletId) {
-    const reviews = await getReviews(outletId);
+    const reviews = await ApiRequest.getOutletReviews(outletId);
                 //<main> id="content" section
                 reviewsLayout.reviewLayout(reviews);
                 reviewsLayout.reviewFormLayout(outletId);
                 id = outletId;
-}
-
-//Fetch outlet list
-async function getOutletList() {
-    const response = await fetch('/api/foodoutlet');
-    const list = await response.json();
-    return list;
-}
-
-//Fetch reviews
-async function getReviews(outletId) {
-    const response = await fetch(`/api/reviews/${outletId}`);
-    const reviews = await response.json();
-    return reviews;
-}
-
-//Post Review
-async function postReviewBody(comment, score, outletId) {
-    try {
-        if (score < 1 || score > 5) {
-            throw new Error(`Score must be between 1 and 5`);
-        }
-        const response = await fetch(`/api/reviews/${outletId}/reviews`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + localStorage.getItem('token')
-            },
-            body: JSON.stringify({
-                comment: comment,
-                score: score
-            })
-        });
-        const result = await response.json();
-        const error = await result.error;
-        if (response.ok) {
-            alert('Submission successful ');
-            mainContent.innerHTML = "";
-            await loadReviews(outletId);
-        } else {
-            throw new Error(`Submission failed. ${error}`);
-        }
-    } catch (e) {
-        alert(e);
-        console.log(e);
-    }
 }

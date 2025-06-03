@@ -27,7 +27,7 @@ async function getUserName(reload) {
 }
 
 function saveSession(sessionUserData) {
-    localStorage.setItem("object", JSON.stringify(sessionUserData));
+    sessionStorage.setItem("object", JSON.stringify(sessionUserData));
 }
 
 export default {

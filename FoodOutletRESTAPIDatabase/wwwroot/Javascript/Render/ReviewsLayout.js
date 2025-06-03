@@ -1,3 +1,5 @@
+import ApiRequest from "/Javascript/Services/ApiRequest.js";
+
 var mainContent = "";
 
 function setMainContent(setmainContent) {
@@ -9,11 +11,8 @@ async function reviewLayout(reviews) {
     if (reviews.length > 0) {
         for (let i = 0; i < reviews.length; i++) {
             const review = reviews[i];
-            const response = await fetch(`/api/login/${review.userId}`);
-            if (!doesUserExist(response)) {
-                continue;
-            }
-            const userName = await getUserName(response);
+            const response = await fetch(`/api/user/${review.userId}`);
+            const userName = await response.text();
             const breakLine = document.createElement('hr');
             const ratingLine = document.createElement('p');
             ratingLine.id = "reviewP";
@@ -73,7 +72,7 @@ function reviewFormLayout(outletid){
         event.preventDefault();
         const score = postRating.value;
         const comment = postReview.value;
-        postReviewBody(comment, score, outletid);
+        ApiRequest.postReviewBody(comment, score, outletid, mainContent);
     });
 
     const breakLine = document.createElement('br');

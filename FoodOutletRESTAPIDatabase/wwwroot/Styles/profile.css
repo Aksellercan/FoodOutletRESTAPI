@@ -122,3 +122,7 @@ main{
     font-size: xx-large;
     font-weight: bold;
 }
+
+#headerLogin {
+    cursor: pointer;
+}
