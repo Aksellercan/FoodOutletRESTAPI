@@ -1,4 +1,4 @@
-import Auth from './Services/Auth.js';
+import Auth from '/Javascript/Services/Auth.js';
 
 function clearStorage() {
     localStorage.removeItem('token');
@@ -31,7 +31,6 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         //console.log('Token:', result.token);
     } else {
         alert('Login failed');
-        console.log(result);
     }
 });
 

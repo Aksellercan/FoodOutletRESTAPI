@@ -91,7 +91,6 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             if (!compareHashPassword(userLogin.Password, user.Password, salt)) return Unauthorized();
 
             var token = GenerateJwtToken(user, config);
-
             Response.Cookies.Append("Identity", token, new CookieOptions
             {
                 HttpOnly = true,

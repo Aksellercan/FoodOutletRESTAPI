@@ -1,4 +1,4 @@
-import UserDetails from './UserDetails.js';
+import UserDetails from '/Javascript/User/UserDetails.js';
 
 const CurrentUser = new UserDetails();
 var isLoggedin = false;
@@ -27,9 +27,7 @@ async function getUserName(reload) {
 }
 
 function saveSession(sessionUserData) {
-    sessionStorage.setItem("id", sessionUserData.getCurrentUserId());
-    sessionStorage.setItem("username", sessionUserData.getCurrentUsername());
-    sessionStorage.setItem("status", sessionUserData.getisLoggedin());
+    localStorage.setItem("object", JSON.stringify(sessionUserData));
 }
 
 export default {

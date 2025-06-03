@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="/Styles/login.css">
+        <title>Login</title>
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div id="profileHeader">
+                    <div id="navigationLinks">
+                        <a id="headerTitle" href="/Pages/Homepage/homepage.html">Home</a>
+                        <a id="headerTitle" href="/Pages/Register/Register.html" onclick="registerPage()">Register</a>
+                    </div>
+                    <h1 id="loggedUserP"></h1>
+                </div>
+            </header>
+            <main id="main">
+                <div id="LoginColorPlate">
+                    <form id="loginForm">
+                        <label for="loginUsername" id="loginLabelBtn">User Login</label>
+                        <div id="LoginDiv">
+                            <div id="usernameInputDiv">
+                                <input type="text" id="loginUsername" name="Username" required placeholder="Username"/>
+                            </div>
+                            <div id="passwordInputDiv">
+                                <input type="password" id="loginPassword" name="Password" required placeholder="Password"/>
+                            </div>
+                            <button href="#" class="buttonClass" id="submitBtn">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div> 
+        <script type="module" src="/Javascript/Pages/Login.js"></script>
+    </body>
+</html>
