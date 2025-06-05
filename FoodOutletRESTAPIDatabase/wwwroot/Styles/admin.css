@@ -1,0 +1,131 @@
+body, html, * { padding: 0; margin: 0}
+
+.container{
+    display: grid;
+    grid-template-columns: 16rem 1fr 24rem;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: 
+    "header header header"
+    "nav main sidebar";
+    min-height: 100vh;
+}
+
+header{
+    grid-area: header;
+    padding: 2rem;
+    background-color: green;
+}
+
+nav{
+    grid-area: nav;
+    padding: 2rem;
+    background-color: #171717;
+}
+
+main{
+    grid-area: main;
+    padding: 2rem;
+    background-color: #212121;
+}
+
+aside{
+    grid-area: sidebar;
+    padding: 2rem;
+    background-color: #171717;
+}
+
+@media(max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(5rem,auto) 1fr minmax(5rem,auto); 
+        grid-template-areas: 
+        "header"
+        "nav"
+        "main"
+        "sidebar";
+    }
+}
+
+.listH2 {
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bold;
+}
+
+#outletShowList a{
+	font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: lighter;
+    font-style: italic;
+	text-align: left;
+	padding-right: 10px;
+	padding-left: 10px;
+	color: #ffffff;
+}
+
+.myButton {
+	box-shadow:inset 0px 1px 0px 0px #7a8eb9;
+	background:linear-gradient(to bottom, #637aad 5%, #5972a7 100%);
+	background-color:#637aad;
+	border:1px solid #314179;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:13px;
+	font-weight:bold;
+	padding:6px 12px;
+	text-decoration:none;
+}
+.myButton:hover {
+	background:linear-gradient(to bottom, #5972a7 5%, #637aad 100%);
+	background-color:#5972a7;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+#contentH2{
+    color: white;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bolder;
+}
+
+#loggedUser{
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    color: white;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: "bold";
+    font-size: large;
+}
+
+#showCurrUser{
+    font-size: larger;
+    font-weight: bold;
+}
+
+#titleHeader{
+    color: white;
+    font-weight: bold;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#asidePanelP{
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: lighter;
+    color: white;
+}
+
+#navigationLinks * {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: white;
+    font-size:x-large;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#loginLink {
+    cursor: pointer;
+}

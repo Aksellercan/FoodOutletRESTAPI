@@ -8,7 +8,7 @@ New stuff to add to API
 
 Benefits of this is less API and Database calls thus making it faster
 
-2. Optimizing readability: IN PROGRESS
+2. Optimizing readability: DONE
 
 - Organize JS functions into separate files and import them into one main file to be used.
 - Same for CSS files as well
@@ -20,4 +20,4 @@ Refactoring and making the program more extendible
 
 Non important stuff: Add needed pages accordingly
 
-3. Add Fallback Page routing incase User tries to go to a URL that doesn't exist: LATER
+3. Add Fallback Page routing incase User tries to go to a URL that doesn't exist: IN PROGRESS

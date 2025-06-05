@@ -12,7 +12,6 @@ namespace FoodOutletRESTAPIDatabase.Services.Logger
     {
         private static bool debugOutput = false;
 
-
         public static void setDebugOutput(bool setdebugOutput) 
         {
             debugOutput = setdebugOutput;
