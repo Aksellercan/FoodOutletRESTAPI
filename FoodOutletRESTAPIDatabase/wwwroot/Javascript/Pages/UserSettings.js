@@ -20,7 +20,7 @@ document.getElementById('deleteAccountForm').addEventListener('submit', async fu
     event.preventDefault();
     const enteredName = document.getElementById('deleteAccount').value;
     if (enteredName === CurrentUserName) {
-        ApiRequest.removeUser(CurrentUserId);
+        await ApiRequest.removeUser(CurrentUserId);
     }
 });
 

@@ -1,3 +1,6 @@
+import reviewsLayout from '/Javascript/Render/ReviewsLayout.js';
+import Logout from '/Javascript/User/Logout.js';
+
 const path = "/Identity";
 
 async function getReviews() {
@@ -8,6 +11,14 @@ async function getReviews() {
     });
     const reviews = await response.json();
     return reviews;
+}
+
+async function loadReviews(outletId) {
+    const reviews = await getOutletReviews(outletId);
+    //<main> id="content" section
+    reviewsLayout.reviewLayout(reviews);
+    reviewsLayout.reviewFormLayout(outletId);
+    return outletId;
 }
 
 //Fetch reviews
@@ -63,13 +74,8 @@ async function removeUser(CurrentUserId) {
         credentials: "include",
         path:path
     });
-    const logoutRequest = await fetch('/api/login/logout', { 
-            method: "POST",
-            credentials: "include",
-            path:path
-        });
     alert("Account Removed!");
-    window.location.href = "https://localhost:7277/index.html"; //send to the frontpage (placeholder)
+    Logout.LogOut();
 }
 
 async function updatePassword(newPassword) {
@@ -109,6 +115,7 @@ async function refreshToken() {
 export default {
     getReviews,
     removeUser,
+    loadReviews,
     getOutletReviews,
     postReviewBody,
     updatePassword,

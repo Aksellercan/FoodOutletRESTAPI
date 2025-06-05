@@ -47,12 +47,6 @@ main{
     font-size:large;
 }
 
-#updateUsernameLabelBtn {
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    color: white;
-    font-size:large;
-}
-
 .buttonClass {
     font-size:15px;
     font-family:Arial;
@@ -117,15 +111,10 @@ main{
     text-decoration: none;
 }
 
-#LoginDiv *{
+#RegisterDiv *{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: medium;
     width: 100%;
-}
-
-#loggedUserP{
-    font-size: larger;
-    font-weight: bold;
 }
 
 #usernameInputDiv {
@@ -142,7 +131,7 @@ main{
     margin-bottom: 1rem;
 }
 
-#loginLabelBtn {
+#registerLabelBtn {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: white;
     font-size: 3rem;
@@ -154,7 +143,7 @@ main{
     align-items: center;
 }
 
-#LoginColorPlate {
+#RegisterColorPlate {
     display: flex;
     justify-content: center;
     align-items: center;

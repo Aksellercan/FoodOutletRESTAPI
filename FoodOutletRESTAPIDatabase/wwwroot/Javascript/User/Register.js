@@ -13,15 +13,19 @@ async function requestRegister(username, password){
     });
     if (response.ok) {
         Login.Login(username, password);
+        return true;
     } else {
         alert('Registration failed');
+        return false;
     }
 }
 
-async function Register(){
-    const username = document.getElementById('regUsername').value;
-    const password = document.getElementById('regPassword').value;
-    await requestRegister(username, password);
+async function Register(username, password){
+    const response = await requestRegister(username, password);
+    if (!response) {
+        console.log("Register error");
+        return;
+    }
 }
 
 export default {

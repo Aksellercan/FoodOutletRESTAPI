@@ -14,9 +14,9 @@ async function getUserName(reload) {
     if (testResponse.status === 200) {
         isLoggedin = true;
         CurrentUser.setLoggedinStatus(isLoggedin);
-        CurrentUser.setUserDetails(currUser.id, currUser.username);
+        CurrentUser.setUserDetails(currUser.id, currUser.username, currUser.role);
         
-        console.log(`currUser raw text: Name ${CurrentUser.getCurrentUsername()} and id ${CurrentUser.getCurrentUserId()}`);
+        console.log(`currUser raw text: Role ${CurrentUser.getCurrentUserRole()} Name ${CurrentUser.getCurrentUsername()} and id ${CurrentUser.getCurrentUserId()}`);
         saveSession(CurrentUser);
         if (reload) {
             location.reload();

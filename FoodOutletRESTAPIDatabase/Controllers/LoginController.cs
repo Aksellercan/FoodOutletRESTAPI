@@ -120,7 +120,6 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 return BadRequest("Unauthenticated or user not found");
             }
 
-
             int currentUserId = int.Parse(claimCurrentUserId?.Value);
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
             if (user == null)

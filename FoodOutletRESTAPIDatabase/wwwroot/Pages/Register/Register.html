@@ -1,48 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <link rel="stylesheet" href="/Styles/userSettings.css">
-        <title>User Settings</title>
+        <link rel="stylesheet" href="/Styles/register.css">
+        <title>Register</title>
     </head>
     <body>
         <div class="container">
             <header>
                 <div id="profileHeader">
                     <div id="navigationLinks">
-                        <a id="headerTitle" href="/Pages/Homepage/homepage.html">Home</a>
-                        <a id="headerTitle" href="/Pages/Profile/profile.html">Profile</a>
-                        <a id="headerLogin" onclick="LogOut()"></a>
+                        <a id="headerTitle" href="/Pages/Homepage/homepage.html">Home |</a>
+                        <a id="headerTitle" href="/Pages/Login/Login.html" onclick="loginPage()">Login</a>
                     </div>
                     <h1 id="loggedUserP"></h1>
                 </div>
             </header>
             <main id="main">
-                <form id="newUsernameForm">
-                    <label for="setNewUsername" id="updateUsernameLabelBtn">Enter New Username</label>
-                    <div id="usernameInputDiv">
-                        <input type="text" id="setNewUsername" name="newUsername"/>
-                        <button href="#" class="buttonClass" id="submitBtn">Submit</button>
-                    </div>
-                </form> 
-                <br></br>
-                <form id="newPasswordForm">
-                    <label for="setNewPassword" id="labelBtn">Enter New Password </label>
-                    <div id="passwordInputDiv">
-                        <input type="text" id="setNewPassword" name="newPassword"/>
-                        <button href="#" class="buttonClass" id="submitBtn">Submit</button>
-                    </div>
-                </form>
-                <br></br>
-                <p id="deleteAccountP">Delete Account</p>
-                <form id="deleteAccountForm">
-                    <label for="deleteAccount" id="labelBtn">Enter Username to Delete Account</label>
-                    <div id="deleteInputDiv">
-                        <input type="text" id="deleteAccount" name="deleteAccount" autocomplete="off" required/>
-                        <button href="#" class="buttonClassRed" id="submit" type="submit">Delete</button>
-                    </div>
-                </form>
+                <div id="RegisterColorPlate">
+                    <form id="registerForm">
+                        <label for="registerUsername" id="registerLabelBtn">Register User</label>
+                        <div id="RegisterDiv">
+                            <div id="usernameInputDiv">
+                                <input type="text" id="registerUsername" name="Username" required placeholder="Username"/>
+                            </div>
+                            <div id="passwordInputDiv">
+                                <input type="password" id="registerPassword" name="Password" required placeholder="Password"/>
+                            </div>
+                            <button href="#" class="buttonClass" id="submitBtn">Register</button>
+                        </div>
+                    </form>
+                </div>
             </main>
         </div> 
-        <script type="module" src="/Javascript/Pages/userSettings.js"></script>
+        <script type="module" src="/Javascript/Pages/Register.js"></script>
     </body>
 </html>

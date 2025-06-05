@@ -16,9 +16,10 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
     const outletList = await ApiRequest.getOutletList();
     const resultDiv = document.getElementById('outletShowList');
     Header.basicHeader();
-    if (Header.getisLoggedin() === false) return;
-    CurrentUserName = Header.getCurrentUsername();
-    CurrentUserId = Header.getCurrentUserId();
+    if (Header.getisLoggedin() != false) { 
+        CurrentUserName = Header.getCurrentUsername();
+        CurrentUserId = Header.getCurrentUserId();
+    }
 
     //continue
     if (outletList.length > 0) {
@@ -30,7 +31,7 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
             outletLine.addEventListener('click', async function (event) {
                 event.preventDefault();
                 if (outlet.id == id) { return; } //avoid loading same data
-                loadReviews(outlet.id);
+                id = ApiRequest.loadReviews(outlet.id);
                 mainContent.innerHTML = "";
                 document.getElementById('titleHeader').textContent = `Reviews for ${outlet.name}`;
                 id = outlet.id;
@@ -42,11 +43,3 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
 });
 
 window.Logout = Logout.LogOut;
-
-async function loadReviews(outletId) {
-    const reviews = await ApiRequest.getOutletReviews(outletId);
-                //<main> id="content" section
-                reviewsLayout.reviewLayout(reviews);
-                reviewsLayout.reviewFormLayout(outletId);
-                id = outletId;
-}

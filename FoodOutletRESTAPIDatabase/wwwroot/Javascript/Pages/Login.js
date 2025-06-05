@@ -1,4 +1,7 @@
 import Login from "/Javascript/User/Login.js";
+import Header from "/Javascript/Functions/Header.js";
+
+Header.loginHeader();
 
 document.getElementById('loginForm').addEventListener('submit', async function (event) {
     event.preventDefault();

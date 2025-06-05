@@ -1,5 +1,6 @@
 var CurrentUserName;
 var CurrentUserId;
+var CurrentUserRole;
 var isLoggedin;
 
 function getInfo() {
@@ -9,6 +10,7 @@ function getInfo() {
     } else {
         CurrentUserName = parsedObject.CurrentUsername;
         CurrentUserId = parsedObject.CurrentUserId;
+        CurrentUserRole = parsedObject.CurrentUserRole
         isLoggedin = parsedObject.isLoggedin;
     }
 }
@@ -29,6 +31,7 @@ function headerLayout() {
 function basicHeader() {
     getInfo();
     if (isLoggedin) {
+        document.getElementById('linkProfile').textContent = 'Profile |';
         document.getElementById('loginLink').textContent = 'Log out';
         document.getElementById('showCurrUser').textContent = `${CurrentUserName}`;
     } else {
@@ -40,7 +43,7 @@ function profileHeader() {
     getInfo();
     if (isLoggedin) {
         const settingsPage = document.getElementById('headerSettings');
-        settingsPage.textContent = 'Settings'
+        settingsPage.textContent = 'Settings |'
         settingsPage.href = '/Pages/UserSettings/userSettings.html';
         document.getElementById('headerLogin').textContent = 'Log out';
         document.getElementById('loggedUserP').textContent = `${CurrentUserName}`;
@@ -49,6 +52,27 @@ function profileHeader() {
         document.getElementById('headerLogin').textContent = 'Login';
         document.getElementById('loggedUserP').textContent = "Not logged in!";
         document.getElementById('profileMainHeader').textContent = `Login to View.`;
+    }
+}
+
+function adminHeader() {
+    getInfo();
+    if (isLoggedin && CurrentUserRole === "Admin") {
+        const settingsPage = document.getElementById('headerSettings');
+        settingsPage.textContent = 'Settings |'
+        settingsPage.href = '/Pages/UserSettings/userSettings.html';
+        document.getElementById('headerLogin').textContent = 'Log out';
+        document.getElementById('loggedUserP').textContent = `${CurrentUserName}`;
+        document.getElementById('profileMainHeader').textContent = `${CurrentUserName}'s Reviews:`;
+    } else {
+        window.location = "/index.html";
+    }
+}
+
+function loginHeader() {
+    getInfo();
+    if (isLoggedin) {
+    document.getElementById('loggedUserP').textContent = `Currently Logged in as ${CurrentUserName}`;
     }
 }
 
@@ -66,6 +90,8 @@ function getCurrentUserId() {
 
 export default {
     headerLayout,
+    adminHeader,
+    loginHeader,
     basicHeader,
     profileHeader,
     getCurrentUserId,

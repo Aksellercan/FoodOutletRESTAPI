@@ -6,7 +6,9 @@ async function loop(isLoggedin){
     listContent.innerHTML = '';
     listContent.appendChild(breakLine);
     let reviewsArray;
-    if (isLoggedin) {
+    if (!isLoggedin) {
+        return;
+    } else {
         reviewsArray = await ApiRequest.getReviews();
     }
 

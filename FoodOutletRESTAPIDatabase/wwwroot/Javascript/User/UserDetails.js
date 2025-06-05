@@ -3,11 +3,13 @@ export default class UserDetails {
         this.isLoggedin = false;
         this.CurrentUserId = null;
         this.CurrentUsername = null;
+        this.CurrentUserRole = null;
     }
 
-    setUserDetails(CurrentUserId, CurrentUsername) {
+    setUserDetails(CurrentUserId, CurrentUsername, CurrentUserRole) {
         this.CurrentUserId = CurrentUserId;
         this.CurrentUsername = CurrentUsername;
+        this.CurrentUserRole = CurrentUserRole
     }
 
     setLoggedinStatus(isLoggedin) {
@@ -28,5 +30,8 @@ export default class UserDetails {
     }
     getCurrentUserId() {
         return this.CurrentUserId;
+    }
+    getCurrentUserRole(){
+        return this.CurrentUserRole;
     }
 }
