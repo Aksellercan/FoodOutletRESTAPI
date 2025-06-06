@@ -2,6 +2,7 @@ import Header from "/Javascript/Functions/Header.js";
 import ApiRequest from "/Javascript/Services/ApiRequest.js";
 import OutletListLayout from "/Javascript/Render/OutletListLayout.js";
 import AdminFormLayout from "/Javascript/Render/AdminFormLayout.js";
+import Logout from '/Javascript/User/Logout.js';
 
 let id;
 const mainContent = document.getElementById('content');
@@ -33,3 +34,13 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
     }
 });
 
+const addButton = document.getElementById('addOutletBtn');
+
+addButton.addEventListener('click', async function (event) {
+    event.preventDefault();
+    const outletName = document.getElementById('addOutletName').value;
+    const outletLocation = document.getElementById('addOutletLocation').value;
+    await ApiRequest.addOutlet(outletName, outletLocation);
+});
+
+window.Logout = Logout.LogOut;

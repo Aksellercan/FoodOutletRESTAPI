@@ -25,9 +25,25 @@
                 <div id="content"></div>
             </main>
             <aside>
-                <p id="asidePanelP">I'm an aside panel</p>
-                <br></br>
-                <p id="asidePanelP">ads here</p>
+                <div id="adminControls">
+                    <div id="adminAdd">
+                        <p id="asidePanelP">Add Outlet</p>
+                        <form id="addOutletForm">
+                            <label for="addOutletName" id="asidePanelP">Enter Outlet Name</label>
+                            <div id="addInputDiv">
+                                <input type="text" id="addOutletName" name="addOutletName" required/>
+                            </div>
+                            <label for="addOutletLocation" id="asidePanelP">Enter Outlet Location</label>
+                            <div id="addInputDiv">
+                                <input type="text" id="addOutletLocation" name="addOutletLocation" required/>
+                            </div>
+                            <button href="#" class="myButton" id="addOutletBtn" type="submit">Add</button>
+                        </form>
+                        <br></br>
+                        <p id="asidePanelContent"></p>
+                        <div id="adminRemove"></div>
+                    </div>
+                </div>
             </aside>
         </div>
         <script type="module" src="/Javascript/Pages/Admin.js"></script>

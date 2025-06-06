@@ -112,7 +112,7 @@ aside{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
-#asidePanelP{
+#asidePanelP, #asidePanelContent{
     font-family: 'Courier New', Courier, monospace;
     font-weight: lighter;
     color: white;

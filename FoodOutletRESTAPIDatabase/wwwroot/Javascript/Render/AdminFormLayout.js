@@ -47,8 +47,7 @@ function inputFields(formElem) {
     locationInput.name = 'newLocation';
 
     const breakLine = document.createElement('br');
-
-    const setButton = buttons();
+    const setButton = buttons('Submit');
 
     setButton.addEventListener('click', async function(event){
         event.preventDefault();
@@ -64,21 +63,32 @@ function inputFields(formElem) {
         await ApiRequest.updateOutletDetails(newName,newLocation, outlet.id);
     });
 
+    const removeButton = buttons('Remove Outlet');
+    const asidePanel = document.getElementById('adminRemove');
+
+    asidePanel.innerHTML = '';
     formElem.appendChild(nameLabel);
     formElem.appendChild(nameDiv);
-    document.getElementById('nameDiv').appendChild(nameInput);
+    nameDiv.appendChild(nameInput);
     formElem.appendChild(breakLine);
     formElem.appendChild(locationLabel);
     formElem.appendChild(locationDiv);
-    document.getElementById('locationDiv').appendChild(locationInput);
+    locationDiv.appendChild(locationInput);
     formElem.appendChild(setButton);
+    document.getElementById('asidePanelContent').textContent = `Remove Outlet: ${outlet.name}`;
+    asidePanel.appendChild(removeButton);
+
+    removeButton.addEventListener('click', async function(event) {
+        event.preventDefault();
+        await ApiRequest.removeOutlet(outlet.id);
+    });
 }
 
-function buttons() {
+function buttons(textContent) {
     const setButton = document.createElement('a');
     setButton.href = "#";
     setButton.className = "myButton";
-    setButton.textContent = 'Submit';
+    setButton.textContent = textContent;
     return setButton;
 }
 

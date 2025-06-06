@@ -18,6 +18,6 @@ Benefits of this is less API and Database calls thus making it faster
 
 Refactoring and making the program more extendible
 
-Non important stuff: Add needed pages accordingly
+Non important stuff: Add needed pages accordingly DONE
 
 3. Add Fallback Page routing incase User tries to go to a URL that doesn't exist: IN PROGRESS

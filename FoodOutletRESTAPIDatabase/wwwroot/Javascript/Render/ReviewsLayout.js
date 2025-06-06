@@ -45,6 +45,7 @@ async function reviewLayout(reviews) {
 //Review form
 function reviewFormLayout(outletid){
     const postRating = document.createElement('input');
+    postRating.value = 1;
     postRating.id = "inputboxRating";
     postRating.type = "number";
     postRating.style.height = "25px";

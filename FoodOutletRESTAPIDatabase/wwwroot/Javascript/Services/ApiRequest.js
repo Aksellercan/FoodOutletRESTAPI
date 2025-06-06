@@ -124,15 +124,41 @@ async function updateOutletDetails(newName, newLocation, outletid) {
                 location: newLocation
             })
     });
-    const respone = await updateDetails.text();
     if (updateDetails.status === 204) location.reload();
 }
 
+async function removeOutlet(id) {
+    const removeRequest = await fetch (`/api/foodoutlet/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+        path:path
+    });
 
+    if (removeRequest.status === 204) location.reload();
+}
+
+async function addOutlet(name, setlocation) {
+    const addRequest = await fetch(`/api/foodoutlet`, {
+        method: "POST",
+        credentials: "include",
+        path:path, 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            location: setlocation
+        })
+    });
+    const response = await addRequest.json();
+    if (addRequest.status === 201) location.reload();
+}
 
 export default {
     getReviews,
     removeUser,
+    addOutlet,
+    removeOutlet,
     updateOutletDetails,
     loadReviews,
     getOutletReviews,
