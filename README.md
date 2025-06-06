@@ -73,14 +73,13 @@ Each user can write multiple reviews, and each outlet can have many reviews (one
 
 ### DTO Usage
 
--   Avoids deep chaining issues and keeps HTTP responses clean.
-    
--   Custom-written **JSON error messages** via `Newtonsoft.Json`.
-    
+-   Avoids deep chaining issues and keeps HTTP responses clean.    
 
 ### Status Codes
 
 -   Proper use of HTTP status codes (`200`, `400`, `401`, `500`, etc.) for success/failure responses.
+
+-   Custom-written **JSON error messages** via `Newtonsoft.Json`.
 
 ### 🧾 Logging (Custom-Built Logger)
 
