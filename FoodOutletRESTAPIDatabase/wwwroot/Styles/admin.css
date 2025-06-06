@@ -126,6 +126,17 @@ aside{
     text-decoration: none;
 }
 
+#outletForm * {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}
+
+#setNewName, #setNewLocation{
+    color: black;
+}
+
 #loginLink {
     cursor: pointer;
 }

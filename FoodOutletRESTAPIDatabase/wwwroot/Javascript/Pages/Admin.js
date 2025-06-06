@@ -8,7 +8,6 @@ const mainContent = document.getElementById('content');
 document.addEventListener("DOMContentLoaded", async function (event) { //runs on page load
     event.preventDefault();
     Header.adminHeader();
-    AdminFormLayout.setMainContent(mainContent);
     const outletList = await ApiRequest.getOutletList();
     const resultDiv = document.getElementById('outletShowList');
 
@@ -20,11 +19,12 @@ document.addEventListener("DOMContentLoaded", async function (event) { //runs on
 
                 outletLine.addEventListener('click', async function (event) {
                                 event.preventDefault();
+                                AdminFormLayout.setMainContent(mainContent);
+                                AdminFormLayout.setOutlet(outlet);
                                 if (outlet.id == id) { return; } //avoid loading same data
-                                id = ApiRequest.loadReviews(outlet.id);
                                 mainContent.innerHTML = "";
                                 document.getElementById('titleHeader').textContent = `Details for ${outlet.name}`;
-                                AdminFormLayout.outletFormLayout();
+                                AdminFormLayout.loadUI();
                                 id = outlet.id;
                 });
             }

@@ -110,11 +110,30 @@ async function refreshToken() {
     console.log(`Error refreshing token. Status code: ${getRefreshToken.status} and body: ${refreshResponse}`);
 }
 
+async function updateOutletDetails(newName, newLocation, outletid) {
+    console.log(`${newName} and ${newLocation}`);
+    const updateDetails = await fetch(`/api/foodoutlet/${outletid}`, {
+        method: "PUT",
+        credentials: "include",
+        path:path,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+                name: newName,
+                location: newLocation
+            })
+    });
+    const respone = await updateDetails.text();
+    if (updateDetails.status === 204) location.reload();
+}
+
 
 
 export default {
     getReviews,
     removeUser,
+    updateOutletDetails,
     loadReviews,
     getOutletReviews,
     postReviewBody,
