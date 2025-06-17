@@ -4,7 +4,7 @@ A full-stack food outlet review web application built using **ASP.NET Core (Empt
 
 ---
 
-## 🔧 Tech Stack
+## Tech Stack
 
 - **Backend**: ASP.NET Core (Empty)
 - **Frontend**: HTML, CSS, JavaScript (SPA)
@@ -15,9 +15,9 @@ A full-stack food outlet review web application built using **ASP.NET Core (Empt
 
 ---
 
-## 🧠 Key Features
+## Key Features
 
-### ✅ User Authentication
+### User Authentication
 
 - **JWT-based Auth** with access/refresh token flow
 - **HTTP-only Cookies** for session security
@@ -25,7 +25,7 @@ A full-stack food outlet review web application built using **ASP.NET Core (Empt
 - **Refresh Token Endpoint** to keep sessions alive
 - **Change Username / Password / Delete Account**
 
-### 🔐 Password Hashing
+### Password Hashing
 
 - Randomly generated salt per user
 - Stored alongside user in DB
@@ -47,7 +47,7 @@ A full-stack food outlet review web application built using **ASP.NET Core (Empt
       return RandomNumberGenerator.GetBytes(bits / 8);
   }
   ```
-### 🧾 Data Models
+### Data Models
 
 -   **User**
     
@@ -58,7 +58,7 @@ A full-stack food outlet review web application built using **ASP.NET Core (Empt
 
 Each user can write multiple reviews, and each outlet can have many reviews (one-to-many relationships).
 
-## 📡 API Overview
+## API Overview
 
 ### Controllers
 
@@ -81,9 +81,9 @@ Each user can write multiple reviews, and each outlet can have many reviews (one
 
 -   Custom-written **JSON error messages** via `Newtonsoft.Json`.
 
-### 🧾 Logging (Custom-Built Logger)
+### Logging (Custom-Built Logger)
 
-Forget `ILogger`, this project ships with its **own** logger (namespaced under `FoodOutletRESTAPIDatabase.Services.Logger`).
+This project ships with its **own** logger (namespaced under `FoodOutletRESTAPIDatabase.Services.Logger`).
 
 -   **Features**:
     
@@ -99,9 +99,9 @@ Forget `ILogger`, this project ships with its **own** logger (namespaced under `
 ```csharp
 Logger.Log(Severity.DEBUG, $"Username updated to {updateUsername.Username}");
 ```
-⚠️ `Severity.DEBUG` messages are **silenced by default** in production — toggle manually when needed.
+⚠`Severity.DEBUG` messages are **silenced by default** in production — toggle manually when needed.
 
-### 👤 User Roles & Security
+### User Roles & Security
 
 -   All new accounts are created with the role `"User"` by default.
     
@@ -110,27 +110,27 @@ Logger.Log(Severity.DEBUG, $"Username updated to {updateUsername.Username}");
 -   This is an intentional design decision to prevent privilege escalation via API manipulation.
     
 
-> ✅ Secure-by-default: Admin access requires database-level changes.
+> Secure-by-default: Admin access requires database-level changes.
 
-## 🖥️ Frontend SPA
+## Frontend SPA
 
 -   All HTML, CSS, and JavaScript are written from scratch inside the `wwwroot` folder.
     
 -   Pages:
     
-    -   🏠 **Homepage**
+    -   **Homepage**
         
-    -   🔐 **Login**
+    -   **Login**
         
-    -   📝 **Register**
+    -   **Register**
         
-    -   ⚙️ **User Settings** (Change name/password or delete account)
+    -   **User Settings** (Change name/password or delete account)
         
-    -   📄 **Profile Page** (See all your reviews)
+    -   **Profile Page** (See all your reviews)
         
-    -   🛠️ **Admin Page**
+    -   **Admin Page**
   
- ### 🎯 Frontend SPA – No Frameworks, No Nonsense
+ ### Frontend SPA – No Frameworks
 
 This project includes a handcrafted **Single Page Application (SPA)** written in **vanilla JavaScript**.
 
