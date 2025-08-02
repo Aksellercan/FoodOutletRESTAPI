@@ -1,7 +1,5 @@
 import Auth from '/Javascript/Services/Auth.js';
 
-
-
 async function requestLogin(username, password){
     const response = await fetch('/api/login/login', {
         method: 'POST',

@@ -100,8 +100,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 r.Score,
                 r.CreatedAt
             }).ToListAsync();
-
-            Logger.Log(Severity.INFO, "User Review count: " + userReviews.Count);
+            Logger.Log(Severity.DEBUG, "User Review count: " + userReviews.Count);
             return Ok(userReviews);
         }
 
