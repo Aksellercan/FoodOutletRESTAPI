@@ -35,12 +35,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             var claimCurrentUser = User.FindFirst(ClaimTypes.Role);
             string role = claimCurrentUser?.Value.ToString();
             Logger.Log(Severity.INFO, "Current role of user is " + role);
-            if (role.Equals("Admin"))
-            {
-                return true;
-            }
-            Logger.Log(Severity.INFO, "Admin Role Verified!");
-            return false;
+            return role.Equals("Admin");
         }
 
         // List all reviews for a specific food outlet
