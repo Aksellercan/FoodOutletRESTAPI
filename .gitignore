@@ -368,5 +368,5 @@ FodyWeavers.xsd
 .idea/*
 
 # JS
-FoodOutletRESTAPIDatabase/appsettings.json
-FoodOutletRESTAPIDatabase/wwwroot/.files/plans.txt
+/FoodOutletRESTAPIDatabase/appsettings.json
+/FoodOutletRESTAPIDatabase/wwwroot/.files/plans.txt
