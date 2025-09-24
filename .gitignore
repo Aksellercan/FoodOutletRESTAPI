@@ -366,3 +366,7 @@ FodyWeavers.xsd
 # Rider
 .idea/
 .idea/*
+
+# JS
+FoodOutletRESTAPIDatabase/appsettings.json
+FoodOutletRESTAPIDatabase/wwwroot/.files/plans.txt

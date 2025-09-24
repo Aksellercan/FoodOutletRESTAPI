@@ -7,6 +7,7 @@ function getInfo() {
     const parsedObject = JSON.parse(sessionStorage.getItem("object"));
     if(parsedObject === null) {
         isLoggedin = false;
+        console.error("User not logged in");
     } else {
         CurrentUserName = parsedObject.CurrentUsername;
         CurrentUserId = parsedObject.CurrentUserId;
