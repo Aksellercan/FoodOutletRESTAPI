@@ -13,23 +13,15 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class LoginController(FoodOutletDb db, IConfiguration config) : ControllerBase
     {
-        private readonly FoodOutletDb _db;
-        private readonly IConfiguration _config;
-        private Password _passwordService = new Password();
-
-        public LoginController(FoodOutletDb db, IConfiguration config)
-        {
-            _db = db;
-            _config = config;
-        }
+        readonly Password _passwordService = new();
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegister)
         {
-            byte[] salt = _passwordService.createSalt(256);
-            string saltBase64tring = Convert.ToBase64String(salt);
+            byte[] salt = _passwordService.CreateSalt(256);
+            string saltBase64String = Convert.ToBase64String(salt);
 
             var user = new User
             {
@@ -37,15 +29,15 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 Username = userRegister.Username,
                 Password = userRegister.Password,
                 Role = "User",
-                Salt = saltBase64tring
+                Salt = saltBase64String
             };
             user.Password = _passwordService.HashPassword(userRegister.Password, salt); // Hash the password before saving
-            _db.Users.Add(user);
-            await _db.SaveChangesAsync();
+            db.Users.Add(user);
+            await db.SaveChangesAsync();
             return Ok("User registered successfully");
         }
 
-        private string GenerateJwtToken(User user, IConfiguration config)
+        string GenerateJwtToken(User user, IConfiguration config)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -55,10 +47,10 @@ namespace FoodOutletRESTAPIDatabase.Controllers
                 audience: config["Jwt:Audience"],
                 claims: new List<Claim>
                 {
-                new Claim(ClaimTypes.Name, user.Username),
-                //new Claim(ClaimTypes.Email, user.Mail),
-                new Claim(ClaimTypes.Role, user.Role),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Name, user.Username),
+                    //new Claim(ClaimTypes.Email, user.Mail),
+                    new(ClaimTypes.Role, user.Role),
+                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 },
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: credentials);
@@ -66,12 +58,12 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private byte[] getuserSaltDB(User user) 
+        byte[] GetUserSaltDb(User user)
         {
             return Convert.FromBase64String(user.Salt);
         }
 
-        private bool compareHashPassword(string enteredPassword, string userPassword, byte[] salt) 
+        private bool compareHashPassword(string enteredPassword, string userPassword, byte[] salt)
         {
             if (string.Equals(userPassword, _passwordService.HashPassword(enteredPassword, salt)))
             {
@@ -84,10 +76,10 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         public async Task<IActionResult> Login([FromBody] UserLoginDTO userLogin, IConfiguration config)
         {
             // Get first matching user
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Username == userLogin.Username);
             if (user == null) return NotFound("login error: User not found");
             // Retrieve saved Salt for comparing hashes
-            byte[] salt = getuserSaltDB(user);
+            byte[] salt = GetUserSaltDb(user);
             if (!compareHashPassword(userLogin.Password, user.Password, salt)) return Unauthorized();
 
             var token = GenerateJwtToken(user, config);
@@ -105,45 +97,44 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         [HttpGet("CurrentUser")]
         [Authorize]
-        public async Task<IActionResult> getCurrentUser()
+        public async Task<IActionResult> GetCurrentUser()
         {
             var claimCurrentUsername = User.FindFirst(ClaimTypes.Name);
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             var claimCurrentUserRole = User.FindFirst(ClaimTypes.Role);
 
             var currentUsername = claimCurrentUsername?.Value;
-            var currentUserIdstr = claimCurrentUserId?.Value;
+            var currentUserIdString = claimCurrentUserId?.Value;
             var currentUserRole = claimCurrentUserRole?.Value;
 
-            if (currentUserIdstr == null || currentUsername == null || currentUserRole == null)
+            if (currentUserIdString == null || currentUsername == null || currentUserRole == null)
             {
                 return BadRequest("Unauthenticated or user not found");
             }
 
             int currentUserId = int.Parse(claimCurrentUserId?.Value);
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == currentUserId);
             if (user == null)
             {
                 return BadRequest("Unauthenticated or user not found");
             }
 
-            var currentUserDTO = new UserDTO
+            return Ok(new UserDTO
             {
                 Id = currentUserId,
                 Username = currentUsername,
                 Role = currentUserRole
-            };
-            return Ok(currentUserDTO);
+            });
         }
 
         [Authorize]
         [HttpPost ("refreshToken")]
-        public async Task<IActionResult> RefreshAccessToken(IConfiguration config) 
+        public async Task<IActionResult> RefreshAccessToken(IConfiguration config)
         {
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             if (claimCurrentUserId == null) { return Unauthorized("No user ID claim found."); }
             int parsedClaimId = int.Parse(claimCurrentUserId?.Value);
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == parsedClaimId);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == parsedClaimId);
             if (user == null) return Unauthorized("User not found.");
             var token = GenerateJwtToken(user, config);
             Response.Cookies.Append("Identity", token, new CookieOptions
@@ -160,7 +151,7 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         [Authorize]
         [HttpPost("logout")]
-        public IActionResult ClearCookiesLogOut() 
+        public IActionResult ClearCookiesLogOut()
         {
             Response.Cookies.Delete("Identity", new CookieOptions
             {

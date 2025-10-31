@@ -2,9 +2,9 @@
 {
     public class FoodOutlet
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Location { get; set; }
-        public List<Review> Reviews { get; set; } = new();
+        public int Id { get; init; }
+        public required string Name { get; set; }
+        public required string Location { get; set; }
+        public List<Review> Reviews { get; init; } = [];
     }
 }

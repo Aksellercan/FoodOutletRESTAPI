@@ -2,13 +2,13 @@
 {
     public class Review
     {
-        public int Id { get; set; }
-        public int FoodOutletId { get; set; }
+        public int Id { get; init; }
+        public int FoodOutletId { get; init; }
         public FoodOutlet? FoodOutlet { get; set; }
-        public string Comment { get; set; }
-        public int Score { get; set; }
+        public required string Comment { get; init; }
+        public int Score { get; init; }
         public int UserId { get; set; }
-        public User? User { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public User? User { get; init; }
+        public DateTime CreatedAt { get; init; } = DateTime.Now;
     }
 }

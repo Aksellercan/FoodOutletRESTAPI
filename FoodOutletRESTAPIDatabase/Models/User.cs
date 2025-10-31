@@ -2,12 +2,12 @@
 {
     public class User
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
         //public string Mail { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Salt { get; set; } //save salt along side with user
-        public string Role { get; set; }
-        public List<Review> Reviews { get; set; } = new();
+        public required string Username { get; set; }
+        public required string Password { get; set; }
+        public required string Salt { get; set; } //save salt along side with user
+        public required string Role { get; init; }
+        public List<Review> Reviews { get; init; } = [];
     }
 }

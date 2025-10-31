@@ -1,4 +1,4 @@
-﻿using FoodOutletRESTAPIDatabase.Services.Logger;
+﻿using System.Data;
 using FoodOutletRESTAPIDatabase.Services.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,120 +9,108 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController(FoodOutletDb db) : Controller
     {
-        private readonly FoodOutletDb _db;
-        private Password _passwordService = new Password();
+        readonly Password _passwordService = new();
 
-        public UserController(FoodOutletDb db) 
-        {
-            _db = db;
-        }
-
-        private int getCurrentUserId()
+        int GetCurrentUserId()
         {
             var claimCurrentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
             var currentUserId = claimCurrentUserId?.Value;
-            if (currentUserId == null)
-            {
-                throw new UnauthorizedAccessException("Unauthenticated or user not found");
-            }
-            return int.Parse(currentUserId);
+            return (currentUserId != null ? int.Parse(currentUserId) : throw new UnauthorizedAccessException("Unauthenticated or user not found"));
         }
 
-        [HttpGet("{userId}")]
-        public async Task<IActionResult> getUser([FromRoute] int userId)
+        [HttpGet("{userId:int}")]
+        public async Task<IActionResult> GetUser([FromRoute] int userId)
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null) return NotFound("User not found");
-            return Ok(user.Username);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return (user != null ? Ok(user.Username) : NotFound("User not found"));
         }
 
         [Authorize]
-        [HttpDelete("remove/{currUser}")]
-        public async Task<IActionResult> removeUser([FromRoute] int currUser)
+        [HttpDelete("remove/{currUser:int}")]
+        public async Task<IActionResult> RemoveUser([FromRoute] int currUser)
         {
-            var removeUser = await _db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
-            int currentUserId = getCurrentUserId();
-
-            if (removeUser == null) { return BadRequest("Cannot remove. User does not exist!"); }
-            if ((removeUser.Id != currentUserId)) return Unauthorized();
-
             try
             {
-                _db.Users.Remove(removeUser);
-                await _db.SaveChangesAsync();
-                Logger.Log(Severity.DEBUG, $"User with id {removeUser.Id} is successfully removed");
+                var removeUser = await db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
+                int currentUserId = GetCurrentUserId();
+
+                if (removeUser == null) { throw new ArgumentNullException(null, "Cannot remove. User does not exist!"); }
+                if ((removeUser.Id != currentUserId)) return Unauthorized();
+
+                db.Users.Remove(removeUser);
+                await db.SaveChangesAsync();
+                return NoContent();
             } catch (Exception e) {
                 return BadRequest($"Failed to remove user with id {currUser}. {e.Message}");
             }
-            return NoContent();
         }
 
         [Authorize (Roles = "User")]
-        [HttpPut("namech/{currUser}")]
-        public async Task<IActionResult> updateUsername([FromRoute] int currUser, string newUsername)
+        [HttpPut("namech/{currUser:int}")]
+        public async Task<IActionResult> UpdateUsername([FromRoute] int currUser, string newUsername)
         {
-            var updateUsername = await _db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
-            int currentUserId = getCurrentUserId();
-
-            if (updateUsername == null) { return BadRequest("Cannot remove. User does not exist!"); }
-            if ((updateUsername.Id != currentUserId)) return Unauthorized();
-
-            try 
+            try
             {
+                var updateUsername = await db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
+                int currentUserId = GetCurrentUserId();
+
+                if (updateUsername == null) { throw new ArgumentNullException(null, "Cannot update username. User does not exist!"); }
+                if ((updateUsername.Id != currentUserId)) return Unauthorized();
+
                 updateUsername.Username = newUsername;
-                await _db.SaveChangesAsync();
-                Logger.Log(Severity.DEBUG, $"Username updated to {updateUsername.Username}");
+                await db.SaveChangesAsync();
+                return Ok();
             }
             catch (Exception e) {
                 return BadRequest($"Failed to update username for user with id {currUser}. {e.Message}");
             }
-            return Ok();
         }
 
-        //[Authorize]
-        //[HttpPut("mailch/[currUser]")]
-        //public async Task<IActionResult> updateUsermail([FromRoute] int currUser, string newMail)
-        //{
-        //    var updateUsermail = await _db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
-        //    if (updateUsermail == null) { return BadRequest("Cannot remove. User does not exist!"); }
-
-        //    try
-        //    {
-        //        updateUsermail.Username = newMail;
-        //        await _db.SaveChangesAsync();
-        //        Console.WriteLine($"Username updated to {updateUsermail.Username}");
-        //    } catch (Exception e) { }
-        //    return Ok();
-        //}
+        // [Authorize]
+        // [HttpPut("mailch/{currUser:int}")]
+        // public async Task<IActionResult> UpdateUserMail([FromRoute] int currUser, string newMail)
+        // {
+        //     try
+        //     {
+        //         var updateUserMail = await db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
+        //         if (updateUserMail == null) { throw new ArgumentNullException(null, "User does not exist!"); }
+        //         updateUserMail.Username = newMail;
+        //         await db.SaveChangesAsync();
+        //         return Ok();
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         logger.LogError("{}", e.Message);
+        //         return BadRequest($"Failed to update user mail for user with id {currUser}. {e.Message}");
+        //     }
+        // }
 
         [Authorize]
-        [HttpPut("passch/{currUser}")]
-        public async Task<IActionResult> updateUserPassword([FromRoute] int currUser, string newPassword)
+        [HttpPut("passch/{currUser:int}")]
+        public async Task<IActionResult> UpdateUserPassword([FromRoute] int currUser, string newPassword)
         {
-            var updateUserpassword = await _db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
-            if (updateUserpassword == null) { return BadRequest("Cannot remove. User does not exist!"); }
-
-            try 
+            try
             {
-                byte[] compareSalt = Convert.FromBase64String(updateUserpassword.Salt);
+                var updateUserPassword = await db.Users.FirstOrDefaultAsync(u => u.Id == currUser);
+                if (updateUserPassword == null) { throw new ArgumentNullException(null, "Cannot update password. User does not exist!"); }
+                byte[] compareSalt = Convert.FromBase64String(updateUserPassword.Salt);
                 string compareHashes = _passwordService.HashPassword(newPassword, compareSalt);
-                if (string.Equals(updateUserpassword.Password, compareHashes))
+                if (string.Equals(updateUserPassword.Password, compareHashes))
                 {
-                    Logger.Log(Severity.WARN, "New Password is same as old one or malformed.");
-                    return BadRequest("New Password is same as old one or malformed.");
+                    throw new DuplicateNameException("New Password is same as old one or malformed.");
                 }
-                byte[] newSalt = _passwordService.createSalt(256);
-                string saltBase64tring = Convert.ToBase64String(newSalt);
+                byte[] newSalt = _passwordService.CreateSalt(256);
+                string saltBase64String = Convert.ToBase64String(newSalt);
                 string newHashedPassword = _passwordService.HashPassword(newPassword, newSalt);
-                updateUserpassword.Password = newHashedPassword;
-                updateUserpassword.Salt = saltBase64tring;
-                await _db.SaveChangesAsync();
+                updateUserPassword.Password = newHashedPassword;
+                updateUserPassword.Salt = saltBase64String;
+                await db.SaveChangesAsync();
+                return Ok();
             } catch (Exception e) {
                 return BadRequest($"Failed to update password for user with id {currUser}. {e.Message}");
             }
-            return Ok();
         }
     }
 }

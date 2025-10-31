@@ -1,21 +1,13 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Net.Http.Json;
 using FoodOutletRESTAPIDatabase.Models;
-using FoodOutletRESTAPIDatabase.Controllers;
-using FoodOutletRESTAPIDatabase;
-using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
 namespace FoodOutletRESTAPITest
 {
     [TestClass]
-    public sealed class Test1
+    public sealed class Test1(HttpClient client)
     {
-        private HttpClient _client;
+        HttpClient _client = client;
 
         [TestInitialize]
         public void SetUp()
@@ -90,7 +82,7 @@ namespace FoodOutletRESTAPITest
         [TestMethod]
         public async Task PostReview_ShouldReturnSuccess()
         {
-            int foodOutletId = 8;
+            const int foodOutletId = 8;
 
             // Review data
             var reviewData = new
@@ -100,7 +92,7 @@ namespace FoodOutletRESTAPITest
             };
 
             // JWT token
-            var jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczODM1MDY0NCwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.FX4CcHB4-kA0QLqLqAovvpQEdYfxLNYOTOdnxHoIeWw";
+            const string jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNCIsImV4cCI6MTczODM1MDY0NCwiaXNzIjoiWW91cklzc3VlciIsImF1ZCI6IllvdXJBdWRpZW5jZSJ9.FX4CcHB4-kA0QLqLqAovvpQEdYfxLNYOTOdnxHoIeWw";
 
             // Set the authorization header with the Bearer token
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
@@ -119,7 +111,7 @@ namespace FoodOutletRESTAPITest
         public async Task PostReview_ShouldReturnFail()
         {
             // Your food outlet ID
-            int foodOutletId = 8;
+            const int foodOutletId = 8;
 
             // Review data
             var reviewData = new
@@ -129,7 +121,7 @@ namespace FoodOutletRESTAPITest
             };
 
             // JWT token
-            var jwtToken = "token";
+            const string jwtToken = "token";
 
             // Set the authorization header with the Bearer token
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
@@ -185,14 +177,14 @@ namespace FoodOutletRESTAPITest
             };
 
             // Assert: Check if the new outlet was added
-            Assert.IsTrue(actualOutlets.Any(outlet =>
+            Assert.IsTrue(actualOutlets != null && actualOutlets.Any(outlet =>
                 string.Equals(outlet.Name, expectedOutlet.Name, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(outlet.Location, expectedOutlet.Location, StringComparison.OrdinalIgnoreCase)
             ), "New outlet was not added correctly.");
         }
 
         [TestMethod]
-        public async Task AddFoodOutlet_ShouldReturnfail()
+        public async Task AddFoodOutlet_ShouldReturnFail()
         {
             // Setup the outlet data
             var newOutlet = new
@@ -202,7 +194,7 @@ namespace FoodOutletRESTAPITest
             };
 
             // JWT token
-            var jwtToken = "token";
+            const string jwtToken = "token";
 
             // Set the authorization header with the Bearer token
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
@@ -234,7 +226,7 @@ namespace FoodOutletRESTAPITest
 
             var expectedReview1 = new Review
             {
-                FoodOutlet = new FoodOutlet { Id = 8, Name = "Kebab King 4" },
+                FoodOutlet = new FoodOutlet { Id = 8, Name = "Kebab King 4", Location = "somewhere" },
                 Id = 10,
                 Comment = "Postman Reviews i have an idea!",
                 Score = 3,
@@ -243,7 +235,7 @@ namespace FoodOutletRESTAPITest
 
             var expectedReview2 = new Review
             {
-                FoodOutlet = new FoodOutlet { Id = 8, Name = "Kebab King 4" },
+                FoodOutlet = new FoodOutlet { Id = 8, Name = "Kebab King 4", Location = "somewhere"},
                 Id = 12,
                 Comment = "testing sending review from the spa",
                 Score = 4,
@@ -251,16 +243,18 @@ namespace FoodOutletRESTAPITest
             };
 
             // Assert: Check if at least one review matches the expected structure
-            var review1Matches = reviews.Any(r =>
+            var review1Matches = reviews != null && reviews.Any(r =>
                 r.Id == expectedReview1.Id &&
+                r.FoodOutlet != null &&
                 r.FoodOutlet.Id == expectedReview1.FoodOutlet.Id &&
                 r.FoodOutlet.Name == expectedReview1.FoodOutlet.Name &&
                 r.Comment == expectedReview1.Comment &&
                 r.Score == expectedReview1.Score &&
                 r.CreatedAt == expectedReview1.CreatedAt);
 
-            var review2Matches = reviews.Any(r =>
+            var review2Matches = reviews != null && reviews.Any(r =>
                 r.Id == expectedReview2.Id &&
+                r.FoodOutlet != null &&
                 r.FoodOutlet.Id == expectedReview2.FoodOutlet.Id &&
                 r.FoodOutlet.Name == expectedReview2.FoodOutlet.Name &&
                 r.Comment == expectedReview2.Comment &&

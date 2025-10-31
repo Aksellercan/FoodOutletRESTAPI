@@ -4,15 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Newtonsoft.Json;
-using FoodOutletRESTAPIDatabase.Services.Logger;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-
-Logger.setDebugOutput(false); //whether to print debug lines to console or not
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FoodOutletDb>(opt => opt.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -34,22 +30,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnAuthenticationFailed = context =>
             {
-                if (!context.Response.HasStarted)
-                {
-                    context.Response.StatusCode = 401;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
-                    Logger.Log(Severity.ERROR, "Authentication failed: " + context.Exception.Message);
-                    return context.Response.WriteAsync(result);
-                }
-                return Task.CompletedTask;
+                if (context.Response.HasStarted) return Task.CompletedTask;
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var result = JsonConvert.SerializeObject(new { error = "Authentication failed! Try again..." });
+                return context.Response.WriteAsync(result);
             },
-            OnTokenValidated = context =>
-            {
-                Logger.Log(Severity.INFO, "Token Validated");
-                return Task.CompletedTask;
-            },
-            OnMessageReceived = context => 
+            OnTokenValidated = context => Task.CompletedTask,
+            OnMessageReceived = context =>
             {
                 var token = context.Request.Cookies["Identity"];
                 if (!string.IsNullOrEmpty(token)) {
@@ -57,33 +45,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
                 return Task.CompletedTask;
             },
-            OnChallenge = context => 
+            OnChallenge = context =>
             {
                 context.HandleResponse();
-                if (!context.Response.HasStarted)
-                {
-                    context.Response.StatusCode = 401;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonConvert.SerializeObject(new { error = "You are not authenticated!" });
-                    return context.Response.WriteAsync(result);
-                }
-                return Task.CompletedTask;
+                if (context.Response.HasStarted) return Task.CompletedTask;
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var result = JsonConvert.SerializeObject(new { error = "You are not authenticated!" });
+                return context.Response.WriteAsync(result);
             },
             OnForbidden = context =>
             {
-                if (!context.Response.HasStarted)
-                {
-                    context.Response.StatusCode = 403;
-                    context.Response.ContentType = "application/json";
-                    var result = JsonConvert.SerializeObject(new { error = "You don't have access to this content" });
-                    Logger.Log(Severity.ERROR, "You lack the privileges to access this content");
-                    return context.Response.WriteAsync(result);
-                }
-                return Task.CompletedTask;
+                if (context.Response.HasStarted) return Task.CompletedTask;
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+                var result = JsonConvert.SerializeObject(new { error = "You don't have access to this content" });
+                return context.Response.WriteAsync(result);
             }
         };
     });
-
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
@@ -96,9 +76,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     // Cookie settings
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
-
 });
-
 
 // Cors testing
 builder.Services.AddCors(options =>

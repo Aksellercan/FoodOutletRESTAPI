@@ -7,20 +7,13 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FoodOutletController : ControllerBase
+    public class FoodOutletController(FoodOutletDb db) : ControllerBase
     {
-        private readonly FoodOutletDb _db;
-
-        public FoodOutletController(FoodOutletDb db)
-        {
-            _db = db;
-        }
-
-        //List all foodoutlets
+        //List all foodOutlets
         [HttpGet]
         public async Task<IActionResult> GetFoodOutlets()
         {
-            var foodOutlets = await _db.FoodOutlets.Select(fo => new
+            var foodOutlets = await db.FoodOutlets.Select(fo => new
             {
                 fo.Id,
                 fo.Name,
@@ -33,23 +26,19 @@ namespace FoodOutletRESTAPIDatabase.Controllers
 
         //All CRUD
         //Read
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetFoodOutletById(int id)
         {
-            var foodOutlet = await _db.FoodOutlets.Where(fo => fo.Id == id).Select(fo => new
+            var foodOutlet = await db.FoodOutlets.Where(fo => fo.Id == id).Select(fo => new
             {
             fo.Id,
             fo.Name,
             fo.Location,
             Rating = fo.Reviews.Any() ? Math.Round(fo.Reviews.Average(r => r.Score), 1) : 0,
             ReviewCount = fo.Reviews.Count
-               }).FirstOrDefaultAsync();
+            }).FirstOrDefaultAsync();
 
-            if (foodOutlet == null)
-            {
-                return NotFound();
-            }
-            return Ok(foodOutlet);
+            return (foodOutlet != null ? Ok(foodOutlet) : NotFound());
         }
 
         //Create
@@ -58,40 +47,40 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         public async Task<IActionResult> CreateFoodOutlet(FoodOutlet foodOutlet)
         {
             if (string.IsNullOrEmpty(foodOutlet.Name) || string.IsNullOrEmpty(foodOutlet.Location)) return BadRequest("Name and Location are required");
-            _db.FoodOutlets.Add(foodOutlet);
-            await _db.SaveChangesAsync();
+            db.FoodOutlets.Add(foodOutlet);
+            await db.SaveChangesAsync();
             return Created($"/foodoutlets/{foodOutlet.Id}", foodOutlet);
         }
 
         //Update
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateFoodOutlet(int id, FoodOutlet updated)
         {
-            var existing = await _db.FoodOutlets.FindAsync(id);
+            var existing = await db.FoodOutlets.FindAsync(id);
             if (existing == null) return NotFound();
             existing.Name = updated.Name;
             existing.Location = updated.Location;
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
             return NoContent();
         }
 
         //Delete
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteFoodOutlet(int id)
         {
-            var outlet = await _db.FoodOutlets.FindAsync(id);
+            var outlet = await db.FoodOutlets.FindAsync(id);
             if (outlet == null) return NotFound();
-            _db.FoodOutlets.Remove(outlet);
-            await _db.SaveChangesAsync();
+            db.FoodOutlets.Remove(outlet);
+            await db.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpGet("top-rated")]
         public async Task<IActionResult> TopRated()
         {
-            var toprated = await _db.FoodOutlets.Select(fo => new
+            var toprated = await db.FoodOutlets.Select(fo => new
             {
                 fo.Id,
                 fo.Name,
@@ -104,10 +93,10 @@ namespace FoodOutletRESTAPIDatabase.Controllers
             return Ok(toprated);
         }
 
-        [HttpGet("{id}/average-rating")]
+        [HttpGet("{id:int}/average-rating")]
         public async Task<IActionResult> GetAverageRating([FromRoute] int id)
         {
-            var averageRating = await _db.Reviews.Where(r => r.FoodOutletId == id).AverageAsync(r => (double?)r.Score);
+            var averageRating = await db.Reviews.Where(r => r.FoodOutletId == id).AverageAsync(r => (double?)r.Score);
             return Ok(averageRating);
         }
     }
