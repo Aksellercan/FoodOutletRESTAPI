@@ -40,5 +40,5 @@ Each user can write multiple reviews, and each outlet can have many reviews (one
 -   All new accounts are created with the role `"User"` by default.
     
 -   Role `"Admin"` **must be assigned manually** in the database.
-    
--   This is an intentional design decision to prevent privilege escalation via API manipulation.
+
+This is an intentional design decision to prevent privilege escalation via API manipulation.
