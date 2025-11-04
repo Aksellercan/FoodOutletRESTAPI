@@ -13,9 +13,7 @@ A full-stack food outlet review web application built using **ASP.NET Empty Core
 ### Data Models
 
 -   **User**
-    
 -   **Review**
-    
 -   **FoodOutlet**
     
 Each user can write multiple reviews, and each outlet can have many reviews (one-to-many relationships).
@@ -25,17 +23,13 @@ Each user can write multiple reviews, and each outlet can have many reviews (one
 ### Controllers
 
 -   `UserController`
-    
 -   `FoodOutletController`
-    
 -   `LoginController`
-    
 -   `ReviewsController`
 
 ### User Roles & Security
 
 -   All new accounts are created with the role `"User"` by default.
-    
 -   Role `"Admin"` **must be assigned manually** in the database.
 
 This is an intentional design decision to prevent privilege escalation via API manipulation.
