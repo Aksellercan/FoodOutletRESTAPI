@@ -46,7 +46,8 @@ namespace FoodOutletRESTAPIDatabase.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateFoodOutlet(FoodOutlet foodOutlet)
         {
-            if (string.IsNullOrEmpty(foodOutlet.Name) || string.IsNullOrEmpty(foodOutlet.Location)) return BadRequest("Name and Location are required");
+            if (string.IsNullOrEmpty(foodOutlet.Name) || string.IsNullOrEmpty(foodOutlet.Location))
+                return BadRequest("Name and Location are required");
             db.FoodOutlets.Add(foodOutlet);
             await db.SaveChangesAsync();
             return Created($"/foodoutlets/{foodOutlet.Id}", foodOutlet);
