@@ -27,7 +27,7 @@ namespace FoodOutletRESTAPITest
         public async Task GetAllFoodOutlets_ShouldReturnSuccess()
         {
             // Act: Send a GET request to the API endpoint
-            var response = await _client.GetAsync("/api/foodoutlet"); // Replace with your API endpoint
+            var response = await _client.GetAsync("/api/foodoutlet");
 
             // Optionally log or check the status code if needed:
             if (!response.IsSuccessStatusCode)
