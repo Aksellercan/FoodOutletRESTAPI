@@ -5,9 +5,11 @@ using System.Net.Http.Headers;
 namespace FoodOutletRESTAPITest
 {
     [TestClass]
-    public sealed class Test1(HttpClient client)
+    public sealed class Test1
     {
-        HttpClient _client = client;
+        private HttpClient _client;
+
+        public Test1() {}
 
         [TestInitialize]
         public void SetUp()
@@ -19,7 +21,7 @@ namespace FoodOutletRESTAPITest
                 ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true
             };
 
-            _client = new HttpClient();
+            _client = new HttpClient(handler);
             _client.BaseAddress = new Uri("http://localhost:5038");
         }
 
@@ -51,7 +53,6 @@ namespace FoodOutletRESTAPITest
         [TestMethod]
         public async Task PostReview_ShouldReturnFail()
         {
-            // Your food outlet ID
             const int foodOutletId = 8;
 
             // Review data
